@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Existencias en inventario - Pallets Alfa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="./css/nav.css">
+    <link rel="stylesheet" href="./css/productos.css">
+    <link rel="icon" href="./assets/Logo-Color-PNG-62x51.png">
+</head>
+<body>
+    <!-- BARRA DE RELLENO SUPERIOR -->
+    <div id="top_bar" class="d-print-none">
+        
+    </div>
+
+    <!-- BARRA DE NAVEGACION PRINCIPAL -->
+    <header id="site_header" class="d-print-none">
+        
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main id="main" class="container">
+        <div class="d-flex align-items-center justify-content-between flex-wrap">
+            <h1 class="mt-3">Inventario</h1>
+            <img src="./assets/Logo-Color-PNG-62x51.png" alt="Logo" class="mt-2">
+        </div>
+        <div class="row d-flex">
+            <div class="col-lg-12">
+
+                <!-- Acordeón que contiene el formulario -->
+                <div class="accordion mt-4" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFormulario" aria-expanded="false" aria-controls="collapseFormulario">
+                                Agregar nuevo producto
+                            </button>
+                        </h2>
+                        <div id="collapseFormulario" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <form class="container">
+                                    <div class="row mb-3">
+                                        <div class="sistema col-md-6">
+                                            <label for="tipo" class="m-1">Código</label>
+                                            <input type="text" id="tipo" class="form-control" placeholder="Código">
+                                            <p class="error invalid-feedback" id="error-tipo" style="color: red;"></p>
+                                        </div>
+                                        <div class="sistema col-md-3">
+                                            <label for="tipo" class="m-1">Existencia Sistema</label>
+                                            <input type="text" id="tipo" class="form-control" placeholder="Existencia Sistema">
+                                            <p class="error invalid-feedback" id="error-tipo" style="color: red;"></p>
+                                        </div>
+                                        <div class="sistema col-md-3">
+                                            <label for="tipo" class="m-1">Existencia Físico</label>
+                                            <input type="text" id="tipo" class="form-control" placeholder="Existencia Físico">
+                                            <p class="error invalid-feedback" id="error-tipo" style="color: red;"></p>
+                                        </div>
+                                    </div>  
+                                    <div class="sistema col-md-12">
+                                        <label for="descripcion" class="m-1">Descripción</label>
+                                        <input type="text" id="descripcion" class="form-control no-arrows" placeholder="Descripción">
+                                        <p class="error invalid-feedback" id="error-descripcion" style="color: red;"></p>
+                                    </div>
+                                    <div class="d-flex justify-content-end mt-4">
+                                        <button id="btn_add" type="button" class="btn btn-primary">Agregar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros de búsqueda -->
+                <div id="filtrosS" class="row d-flex mt-3">
+                    <div class="col-md">
+                        <label for="filtro_tipo" class="form-label filtro m-1">Almacén</label>
+                        <select class="form-select" id="filtro_tipo">
+                            <option value="">Todos</option>
+                            <option value="">Nave 1</option>
+                            <option value="">Nave 2</option>
+                            <option value="">Nave 3</option>
+                        </select>
+                    </div>
+                    <div class="col-md">
+                        <label for="filtro_buscar" class="form-label filtro m-1">Buscar</label>
+                        <input type="text" id="filtro_buscar" class="form-control" placeholder="Buscar registro...">
+                    </div>
+                    <div class="col-md d-flex align-items-end justify-content-end mt-3">
+                        <button id="btn_filtro" class="btn btn-primary">Filtrar</button>
+                    </div>
+                </div>
+
+                <!-- Tabla de registros -->
+                <div class="table-responsive mt-5">
+                    <table id="tabla_sistemas" class="table table-bordered table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Sistema</th>
+                                <th>Físico</th>
+                                <th>Diferencia</th>
+                                <th>Descripción</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Aquí se agregan los registros -->
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal para editar sistema -->
+    <div class="modal fade" id="sistema_modal" tabindex="-1" aria-labelledby="sistema_modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="row">
+                        <h2 class="modal-title" id="unidad_modalLabel">Editar sistema</h2>
+                        <span class="col form-text text-muted">* Campos editables</span>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <form id="form-editar-sistema">
+                            <input type="hidden" id="edit_id_sistema">
+                            
+                            <!-- Campos no editables -->
+                            <div class="row mb-3">
+                                <div class="col-md-2">
+                                    <label for="edit_id_display" class="form-label">ID</label>
+                                    <input type="text" class="form-control" id="edit_id_display" disabled>
+                                </div>
+                            </div>
+                            
+                            <!-- Campos editables -->
+                            <div class="mb-3">
+                                <label for="edit_tipo" class="form-label">Tipo *</label>
+                                <input type="text" class="form-control" id="edit_tipo" required>
+                                <p class="error invalid-feedback" id="error-editTipo" style="color: red;"></p>
+                            </div>
+                            <div class="mb-3">
+                                <label for="edit_descripcion" class="form-label">Descripción *</label>
+                                <textarea class="form-control" id="edit_descripcion" rows="4"></textarea>
+                                <p class="error invalid-feedback" id="error-editDescripcion" style="color: red;"></p>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" id="btn_del" data-bs-target="#consulta_modal" data-bs-toggle="modal">Eliminar sistema</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="btn_guardar_cambios">Guardar cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación para eliminar registro -->
+    <div class="modal fade" id="consulta_modal" aria-hidden="true" aria-labelledby="consulta_modalLabel" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="consulta_modalLabel">CONFIRMACIÓN</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Está seguro de querer eliminar el registro seleccionado?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary conf-btn" data-bs-target="#unidad_modal" data-bs-toggle="modal">No</button>
+                <button class="btn btn-primary conf-btn" id="btn_eliminar_entrada">Sí</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer id="site_footer" class="d-print-none">
+        
+    </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+<script src="./js/nav.js" type="module"></script>
+</body>
+</html>

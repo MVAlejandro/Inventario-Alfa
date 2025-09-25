@@ -1,0 +1,149 @@
+
+/* Fondo general */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f4f7fc;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Estructura */
+main {
+    flex: 1;
+}
+
+/*--- BARRA DE NAVEGACION PRINCIPAL ---*/
+.navbar-nav, .navbar-toggler {
+    display: none !important;
+}
+
+/*--- CONTENIDO PRINCIPAL ---*/
+/* Banner de presentación */
+#banner {
+  position: relative;
+  background-image: url('../assets/Inventario_Pallets_Alfa.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 500px;
+  color: white; 
+  z-index: 0;
+}
+
+#banner::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+#banner > * {
+  position: relative;
+  z-index: 2;
+}
+
+.banner-title {
+  font-size: 3rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  animation: fadeInUp 1s ease-in-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Cards de navegación */
+.row {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+}
+    
+.card {
+    display: flex;
+    flex-direction: column;
+    border: none;
+    border-radius: 15px; 
+    overflow: hidden; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+    transition: transform 0.3s ease; /* Transición suave al hacer hover */
+}
+
+.card:hover {
+    transform: translateY(-5px); /* Efecto de elevación al pasar el ratón */
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.card-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.card-text {
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.card-subtext {
+    font-size: 0.85rem;
+    color: #999;
+}
+
+.card-img {
+    height: 200px;
+}
+
+.card-img-top {
+    width: 150px !important;
+    object-fit: contain;
+    padding: 10px;
+    background-color: #ffffff;
+}
+
+.btn {
+    border: 2px solid #8FC74A;
+    color: #8FC74A;
+    background-color: transparent;
+    font-weight: bold;
+    padding: 10px 20px;
+    text-transform: uppercase;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.btn:hover {
+    background-color: #6c9639;
+    border-color: #6c9639;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(143, 199, 74, 0.5);
+}
+
+.btn-wrapper {
+    margin-top: auto;
+    padding-top: 15px;
+}
