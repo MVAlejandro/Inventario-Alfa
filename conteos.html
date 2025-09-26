@@ -3,10 +3,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Productos de inventario - Pallets Alfa</title>
+    <title>Registro de inventarios - Pallets Alfa</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="./css/nav.css">
-    <link rel="stylesheet" href="./css/productos.css">
+    <link rel="stylesheet" href="./css/conteos.css">
     <link rel="icon" href="./assets/Logo-Color-PNG-62x51.png">
 </head>
 <body>
@@ -23,7 +23,7 @@
     <!-- CONTENIDO PRINCIPAL -->
     <main id="main" class="container">
         <div class="d-flex align-items-center justify-content-between flex-wrap">
-            <h1 class="mt-3">Productos</h1>
+            <h1 class="mt-3">Inventario</h1>
             <img src="./assets/Logo-Color-PNG-62x51.png" alt="Logo" class="mt-2">
         </div>
         <div class="row d-flex">
@@ -34,24 +34,14 @@
                     <div class="accordion-item">
                         <h2 class="accordion-header">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFormulario" aria-expanded="false" aria-controls="collapseFormulario">
-                                Agregar nuevo producto
+                                Ingresar nuevo conteo
                             </button>
                         </h2>
                         <div id="collapseFormulario" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 <form class="container">
                                     <div class="row mb-3">
-                                        <div class="producto col-md-2">
-                                            <label for="codigo" class="m-1">Código</label>
-                                            <input type="text" id="codigo" class="form-control" placeholder="Código">
-                                            <p class="error invalid-feedback" id="error-codigo" style="color: red;"></p>
-                                        </div>
-                                        <div class="producto col-md-3">
-                                            <label for="nombre" class="m-1">Nombre</label>
-                                            <input type="text" id="nombre" class="form-control" placeholder="Nombre">
-                                            <p class="error invalid-feedback" id="error-nombre" style="color: red;"></p>
-                                        </div>
-                                        <div class="producto col-md-2">
+                                        <div class="conteo col-md-2">
                                             <label for="almacen" class="m-1">Almacén</label>
                                             <select id="almacen" class="form-select" aria-label="Default select example">
                                                 <option value="0">Seleccione...</option>
@@ -61,12 +51,25 @@
                                             </select>
                                             <p class="error invalid-feedback" id="error-almacen" style="color: red;"></p>
                                         </div>
-                                        <div class="producto col-md-5">
-                                            <label for="descripcion" class="m-1">Descripción</label>
-                                            <input type="text" id="descripcion" class="form-control" placeholder="Descripción">
-                                            <p class="error invalid-feedback" id="error-descripcion" style="color: red;"></p>
+                                        <div class="conteo col-md-3">
+                                            <label for="producto" class="m-1">Producto</label>
+                                            <select id="producto" class="form-select" aria-label="Default select example">
+                                                <option value="0">Seleccione...</option>
+
+                                            </select>
+                                            <p class="error invalid-feedback" id="error-producto" style="color: red;"></p>
                                         </div>
-                                    </div>  
+                                        <div class="conteo col-md-2">
+                                            <label for="cantidad" class="m-1">Cantidad</label>
+                                            <input type="number" id="cantidad" class="form-control no-arrows" placeholder="Cantidad">
+                                            <p class="error invalid-feedback" id="error-cantidad" style="color: red;"></p>
+                                        </div>
+                                        <div class="conteo col-md-5">
+                                            <label for="observaciones" class="m-1">Observaciones</label>
+                                            <input type="text" id="observaciones" class="form-control" placeholder="Observaciones">
+                                            <p class="error invalid-feedback" id="error-observaciones" style="color: red;"></p>
+                                        </div>
+                                    </div>
                                     <div class="d-flex justify-content-end mt-4">
                                         <button id="btn_add" type="button" class="btn btn-primary">Agregar</button>
                                     </div>
@@ -77,14 +80,20 @@
                 </div>
 
                 <!-- Filtros de búsqueda -->
-                <div id="filtrosP" class="row d-flex mt-3">
+                <div id="filtrosG" class="row d-flex mt-3">
                     <div class="col-md">
-                        <label for="filtro_tipo" class="form-label filtro m-1">Almacén</label>
+                        <label for="filtro_tipo" class="form-label filtro m-1">Filtrar por</label>
                         <select class="form-select" id="filtro_tipo">
-                            <option value="">Todos</option>
-                            <option value="">Nave 1</option>
-                            <option value="">Nave 2</option>
-                            <option value="">Nave 3</option>
+                            <option value="0">Todos</option>
+                            <option value="fecha">Fecha</option>
+                            <option value="id_producto">Producto</option>
+                            <option value="almacen">Almacén</option>
+                        </select>
+                    </div>
+                    <div class="col-md">
+                        <label for="filtro_orden" class="form-label filtro m-1">Mostrar</label>
+                        <select class="form-select" id="filtro_orden" disabled>
+
                         </select>
                     </div>
                     <div class="col-md">
@@ -98,14 +107,14 @@
 
                 <!-- Tabla de registros -->
                 <div class="table-responsive mt-5">
-                    <table id="tabla_productos" class="table table-bordered table-hover align-middle">
+                    <table id="tabla_gestion" class="table table-bordered table-hover align-middle">
                         <thead>
                             <tr>
-                                <th>Código</th>
-                                <th>Nombre</th>
+                                <th>Fecha de registro</th>
+                                <th>Producto</th>
                                 <th>Almacén</th>
-                                <th>Descripción</th>
-                                <th>Fecha de añadido</th>
+                                <th>Cantidad</th>
+                                <th>Observaciones</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -119,21 +128,21 @@
         </div>
     </main>
 
-    <!-- Modal para editar producto -->
-    <div class="modal fade" id="producto_modal" tabindex="-1" aria-labelledby="producto_modalLabel" aria-hidden="true">
+    <!-- Modal para editar conteo -->
+    <div class="modal fade" id="conteo_modal" tabindex="-1" aria-labelledby="conteo_modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <div class="row">
-                        <h2 class="modal-title" id="producto_modalLabel">Editar producto</h2>
+                        <h2 class="modal-title" id="conteo_modalLabel">Editar conteo/h2>
                         <span class="col form-text text-muted">* Campos editables</span>
                     </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="container">
-                        <form id="form-editar-producto">
-                            <input type="hidden" id="edit_id_producto">
+                        <form id="form-editar-conteo">
+                            <input type="hidden" id="edit_id_conteo">
                             
                             <!-- Campos no editables -->
                             <div class="row mb-3">
@@ -142,58 +151,41 @@
                                     <input type="text" class="form-control" id="edit_id_display" disabled>
                                 </div>
                                 <div class="col-md-3 ms-auto">
-                                    <label for="edit_cod_display" class="form-label">Código</label>
-                                    <input type="text" class="form-control" id="edit_cod_display" disabled>
+                                    <label for="edit_fecha" class="form-label">Fecha</label>
+                                    <input type="text" class="form-control" id="edit_fecha" disabled>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="edit_producto" class="form-label">Producto</label>
+                                    <input type="text" class="form-control" id="edit_producto" disabled>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="edit_almacen" class="form-label">Almacén</label>
+                                    <input type="text" class="form-control" id="edit_almacen" disabled>
                                 </div>
                             </div>
                             
                             <!-- Campos editables -->
                             <div class="mb-3">
-                                <label for="edit_nombre" class="form-label">Nombre *</label>
-                                <input type="text" class="form-control" id="edit_nombre" required>
-                                <p class="error invalid-feedback" id="error-editNombre" style="color: red;"></p>
+                                <label for="edit_cantidad" class="form-label">Cantidad *</label>
+                                <input type="number" class="form-control no-arrows" id="edit_cantidad" required>
+                                <p class="error invalid-feedback" id="error-editCantidad" style="color: red;"></p>
                             </div>
                             <div class="mb-3">
-                                <label for="edit_almacen" class="form-label">Almacén *</label>
-                                <select id="edit_almacen" class="form-select" aria-label="Default select example">
-                                    <option value="0">Seleccione...</option>
-
-                                </select>
-                                <p class="error invalid-feedback" id="error-editAlmacen" style="color: red;"></p>
-                            </div>
-                            <div class="mb-3">
-                                <label for="edit_descripcion" class="form-label">Descripción *</label>
-                                <textarea class="form-control" id="edit_descripcion" rows="4"></textarea>
-                                <p class="error invalid-feedback" id="error-editDescripcion" style="color: red;"></p>
+                                <label for="edit_observaciones" class="form-label">Observaciones *</label>
+                                <textarea class="form-control" id="edit_observaciones" rows="4"></textarea>
+                                <p class="error invalid-feedback" id="error-editObservaciones" style="color: red;"></p>
                             </div>
 
                         </form>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" id="btn_del" data-bs-target="#consulta_modal" data-bs-toggle="modal">Eliminar producto</button>
+                    <button type="button" class="btn btn-danger" id="btn_del" data-bs-target="#consulta_modal" data-bs-toggle="modal">Eliminar conteo</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                     <button type="button" class="btn btn-primary" id="btn_guardar_cambios">Guardar cambios</button>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de confirmación para eliminar registro -->
-    <div class="modal fade" id="consulta_modal" aria-hidden="true" aria-labelledby="consulta_modalLabel" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="consulta_modalLabel">CONFIRMACIÓN</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                ¿Está seguro de querer eliminar el registro seleccionado?
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary conf-btn" data-bs-target="#unidad_modal" data-bs-toggle="modal">No</button>
-                <button class="btn btn-primary conf-btn" id="btn_eliminar_entrada">Sí</button>
-            </div>
             </div>
         </div>
     </div>

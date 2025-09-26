@@ -55,6 +55,7 @@ function crearHeader(header) {
                     <ul class="navbar-nav">
                         <li class="nav-item ms-2 me-2"><a class="nav-link nav-prin" href="./productos.html">Productos</a></li>
                         <li class="nav-item ms-2 me-2"><a class="nav-link nav-prin" href="./gestion.html">Gestión</a></li>
+                        <li class="nav-item ms-2 me-2"><a class="nav-link nav-prin" href="./conteos.html">Inventario</a></li>
                         <li class="nav-item ms-2 me-2"><a class="nav-link nav-prin" href="./reportes.html">Reportes</a></li>
                     </ul>
                 </div>

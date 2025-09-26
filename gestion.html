@@ -21,9 +21,194 @@
     </header>
 
     <!-- CONTENIDO PRINCIPAL -->
-    <main class="mt-5 mb-5">
-        
+    <main id="main" class="container">
+        <div class="d-flex align-items-center justify-content-between flex-wrap">
+            <h1 class="mt-3">Movimientos</h1>
+            <img src="./assets/Logo-Color-PNG-62x51.png" alt="Logo" class="mt-2">
+        </div>
+        <div class="row d-flex">
+            <div class="col-lg-12">
+
+                <!-- Acordeón que contiene el formulario -->
+                <div class="accordion mt-4" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFormulario" aria-expanded="false" aria-controls="collapseFormulario">
+                                Crear nuevo movimiento
+                            </button>
+                        </h2>
+                        <div id="collapseFormulario" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <form class="container">
+                                    <div class="row mb-3">
+                                        <div class="movimiento col-md-4">
+                                            <label for="almacen" class="m-1">Almacén</label>
+                                            <select id="almacen" class="form-select" aria-label="Default select example">
+                                                <option value="0">Seleccione...</option>
+                                                <option value="Nave 1">Nave 1</option>
+                                                <option value="Nave 1">Nave 2</option>
+                                                <option value="Nave 1">Nave 3</option>
+                                            </select>
+                                            <p class="error invalid-feedback" id="error-almacen" style="color: red;"></p>
+                                        </div>
+                                        <div class="movimiento col-md-4">
+                                            <label for="producto" class="m-1">Producto</label>
+                                            <select id="producto" class="form-select" aria-label="Default select example">
+                                                <option value="0">Seleccione...</option>
+
+                                            </select>
+                                            <p class="error invalid-feedback" id="error-producto" style="color: red;"></p>
+                                        </div>
+                                        <div class="movimiento col-md-4">
+                                            <label for="tipo" class="m-1">Movimiento</label>
+                                            <select id="tipo" class="form-select" aria-label="Default select example">
+                                                <option value="0">Seleccione...</option>
+                                                <option value="Entrada">Entrada</option>
+                                                <option value="Salida">Salida</option>
+                                            </select>
+                                            <p class="error invalid-feedback" id="error-tipo" style="color: red;"></p>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="movimiento col-md-2">
+                                            <label for="cantidad" class="m-1">Cantidad</label>
+                                            <input type="number" id="cantidad" class="form-control no-arrows" placeholder="Cantidad">
+                                            <p class="error invalid-feedback" id="error-cantidad" style="color: red;"></p>
+                                        </div>
+                                        <div class="movimiento col-md-10">
+                                            <label for="observaciones" class="m-1">Observaciones</label>
+                                            <input type="text" id="observaciones" class="form-control" placeholder="Observaciones">
+                                            <p class="error invalid-feedback" id="error-observaciones" style="color: red;"></p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-end mt-4">
+                                        <button id="btn_add" type="button" class="btn btn-primary">Agregar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros de búsqueda -->
+                <div id="filtrosG" class="row d-flex mt-3">
+                    <div class="col-md">
+                        <label for="filtro_tipo" class="form-label filtro m-1">Filtrar por</label>
+                        <select class="form-select" id="filtro_tipo">
+                            <option value="0">Todos</option>
+                            <option value="fecha">Fecha</option>
+                            <option value="id_producto">Producto</option>
+                            <option value="almacen">Almacén</option>
+                            <option value="tipo">Movimiento</option>
+                        </select>
+                    </div>
+                    <div class="col-md">
+                        <label for="filtro_orden" class="form-label filtro m-1">Mostrar</label>
+                        <select class="form-select" id="filtro_orden" disabled>
+
+                        </select>
+                    </div>
+                    <div class="col-md">
+                        <label for="filtro_buscar" class="form-label filtro m-1">Buscar</label>
+                        <input type="text" id="filtro_buscar" class="form-control" placeholder="Buscar registro...">
+                    </div>
+                    <div class="col-md d-flex align-items-end justify-content-end mt-3">
+                        <button id="btn_filtro" class="btn btn-primary">Filtrar</button>
+                    </div>
+                </div>
+
+                <!-- Tabla de registros -->
+                <div class="table-responsive mt-5">
+                    <table id="tabla_gestion" class="table table-bordered table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Fecha de registro</th>
+                                <th>Producto</th>
+                                <th>Almacén</th>
+                                <th>Movimiento</th>
+                                <th>Cantidad</th>
+                                <th>Observaciones</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Aquí se agregan los registros -->
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
     </main>
+
+    <!-- Modal para editar movimiento -->
+    <div class="modal fade" id="movimiento_modal" tabindex="-1" aria-labelledby="movimiento_modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="row">
+                        <h2 class="modal-title" id="movimiento_modalLabel">Editar movimiento/h2>
+                        <span class="col form-text text-muted">* Campos editables</span>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <form id="form-editar-movimiento">
+                            <input type="hidden" id="edit_id_movimiento">
+                            
+                            <!-- Campos no editables -->
+                            <div class="row mb-3">
+                                <div class="col-md-2">
+                                    <label for="edit_id_display" class="form-label">ID</label>
+                                    <input type="text" class="form-control" id="edit_id_display" disabled>
+                                </div>
+                                <div class="col-md-3 ms-auto">
+                                    <label for="edit_fecha" class="form-label">Fecha</label>
+                                    <input type="text" class="form-control" id="edit_fecha" disabled>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="edit_producto" class="form-label">Producto</label>
+                                    <input type="text" class="form-control" id="edit_producto" disabled>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="edit_almacen" class="form-label">Almacén</label>
+                                    <input type="text" class="form-control" id="edit_almacen" disabled>
+                                </div>
+                            </div>
+                            
+                            <!-- Campos editables -->
+                             <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="edit_cantidad" class="form-label">Cantidad *</label>
+                                    <input type="number" class="form-control no-arrows" id="edit_cantidad" required>
+                                    <p class="error invalid-feedback" id="error-editCantidad" style="color: red;"></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="edit_movimiento" class="form-label">Movimiento</label>
+                                    <input type="text" class="form-control" id="edit_movimiento" disabled>
+                                    <p class="error invalid-feedback" id="error-editMovimiento" style="color: red;"></p>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="edit_observaciones" class="form-label">Observaciones *</label>
+                                <textarea class="form-control" id="edit_observaciones" rows="4"></textarea>
+                                <p class="error invalid-feedback" id="error-editObservaciones" style="color: red;"></p>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" id="btn_del" data-bs-target="#consulta_modal" data-bs-toggle="modal">Eliminar movimiento</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="btn_guardar_cambios">Guardar cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- FOOTER -->
     <footer id="site_footer" class="d-print-none">

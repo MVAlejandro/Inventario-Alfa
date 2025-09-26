@@ -11,22 +11,156 @@
 </head>
 <body>
     <!-- BARRA DE RELLENO SUPERIOR -->
-    <div id="top_bar" class="d-print-none">
+    <div id="top_bar">
         
     </div>
 
     <!-- BARRA DE NAVEGACION PRINCIPAL -->
-    <header id="site_header" class="d-print-none">
+    <header id="site_header">
         
     </header>
 
     <!-- CONTENIDO PRINCIPAL -->
-    <main class="mt-5 mb-5">
-        
+    <main id="main" class="container mt-5 m-auto">
+        <div class="row">
+            <!-- Navegación planeación -->
+            <div class="col-lg-2 mb-3 ">
+                <div class="nav flex-column nav-pills me-3" id="reportesTabs" role="tablist" aria-orientation="vertical">
+                    <button class="nav-link active" id="inventario_ind-tab" data-bs-toggle="pill" data-bs-target="#inventario_ind" type="button" role="tab">Inventario almacén</button>
+                    <button class="nav-link" id="inventario_gral-tab" data-bs-toggle="pill" data-bs-target="#inventario_gral" type="button" role="tab">Inventario general</button>
+                    <button class="nav-link" id="estadistica-tab" data-bs-toggle="pill" data-bs-target="#estadistica" type="button" role="tab">Estadísticas</button>
+                </div>
+            </div>
+
+            <div class="col-lg-9 m-auto">
+                <div class="tab-content" id="reportesTabsContent">
+                    <!-- Contenedor inventario individual -->
+                    <div class="tab-pane fade show active" id="inventario_ind" role="tabpanel">
+                        <div id="inventario_ind-container">
+                            <h1>Inventario por Almacén</h1>
+                            <!-- Filtros -->
+                            <div id="filtrosI" class="row d-flex mt-5">
+                                <div class="col">
+                                    <label for="fechaInicioI" class="form-label m-2">Fecha inicio</label>
+                                    <input type="date" id="fechaInicioI" class="form-control" placeholder="Fecha">
+                                </div>
+                                <div class="col">
+                                    <label for="fechaFinI" class="form-label m-2">Fecha fin</label>
+                                    <input type="date" id="fechaFinI" class="form-control" placeholder="Fecha">
+                                </div>
+                                <div class="col">
+                                    <label for="estadoI" class="form-label m-2">Almacén</label>
+                                    <select class="form-select" id="estadoI">
+                                        <option value="0">Seleccione...</option>
+                                        <option value="Nave 1">Nave 1</option>
+                                        <option value="Nave 2">Nave 2</option>
+                                        <option value="Nave 3">Nave 3</option>
+                                    </select>
+                                </div>
+                                <div class="col d-flex align-items-center justify-content-end mt-2 ">
+                                    <button id="btn_genI" class="btn btn-primary m-2">Generar</button>
+                                    <button id="btn_printI" class="btn btn-primary">Imprimir</button>
+                                </div>
+                            </div>
+                            <!-- Tabla -->
+                            <div class="table-responsive mt-3">
+                                <table id="reporteInd_tabla" class="table table-bordered table-hover align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Producto</th>
+                                            <th>Sistema</th>
+                                            <th>Piso</th>
+                                            <th>Diferencia</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                                
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contenedor inventario general -->
+                    <div class="tab-pane fade" id="inventario_gral" role="tabpanel">
+                        <div id="inventario_gral-container">
+                            <h1>Inventario General</h1>
+                            <!-- Filtros -->
+                            <div id="filtrosG" class="row d-flex mt-5">
+                                <div class="col">
+                                    <label for="fechaInicioG" class="form-label m-2">Fecha inicio</label>
+                                    <input type="date" id="fechaInicioG" class="form-control" placeholder="Fecha">
+                                </div>
+                                <div class="col">
+                                    <label for="fechaFinG" class="form-label m-2">Fecha fin</label>
+                                    <input type="date" id="fechaFinG" class="form-control" placeholder="Fecha">
+                                </div>
+                                <div class="col d-flex align-items-center justify-content-end mt-2 ">
+                                    <button id="btn_genG" class="btn btn-primary m-2">Generar</button>
+                                    <button id="btn_printG" class="btn btn-primary">Imprimir</button>
+                                </div>
+                            </div>
+                            <!-- Tabla -->
+                            <div class="table-responsive mt-3">
+                                <table id="reporteGral_tabla" class="table table-bordered table-hover align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Concepto</th>
+                                            <th>Cantidad</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                                
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contenedor estadística -->
+                    <div class="tab-pane fade" id="estadistica" role="tabpanel">
+                        <div id="estadistica-container">
+                            <h1>Estadísticas de Inventario</h1>
+                            <!-- Filtros -->
+                            <div id="filtrosE" class="row d-flex mt-5">
+                                <div class="col">
+                                    <label for="fechaInicioE" class="form-label m-2">Fecha inicio</label>
+                                    <input type="date" id="fechaInicioE" class="form-control" placeholder="Fecha">
+                                </div>
+                                <div class="col">
+                                    <label for="fechaFinE" class="form-label m-2">Fecha fin</label>
+                                    <input type="date" id="fechaFinE" class="form-control" placeholder="Fecha">
+                                </div>
+                                <div class="col">
+                                    <label for="estadoE" class="form-label m-2">Almacén</label>
+                                    <select class="form-select" id="estadoE">
+                                        <option value="0">Todos</option>
+                                        <option value="Nave 1">Nave 1</option>
+                                        <option value="Nave 2">Nave 2</option>
+                                        <option value="Nave 3">Nave 3</option>
+                                    </select>
+                                </div>
+                                <div class="col d-flex align-items-center justify-content-end mt-2 ">
+                                    <button id="btn_genE" class="btn btn-primary m-2">Generar</button>
+                                    <button id="btn_printE" class="btn btn-primary">Imprimir</button>
+                                </div>
+                            </div>
+                            <!-- Diagrama -->
+                            <div class="table-responsive mt-3">
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- FOOTER -->
-    <footer id="site_footer" class="d-print-none">
+    <footer id="site_footer" class="">
         
     </footer>
 
