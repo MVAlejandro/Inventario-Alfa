@@ -2,36 +2,7 @@
 import supabase from './supabase/supabase-client.js'
 import { validarCamposInvalidos, validarSelect } from "../js/validaciones/validar_campos.js"
 import { validarText, validarId } from "./validaciones/regex.js"
-
-// Función para cargar datos en los select del formulario
-async function cargarOpciones(selectId, tabla, valueKey, textKey, valorSeleccionado = '0') {
-    const select = document.getElementById(selectId)
-    if (!select) return
-
-    if (valorSeleccionado !== '0') {
-        select.innerHTML = '';
-    }
-
-    const { data, error } = await supabase.from(tabla).select(`${valueKey}, ${textKey}`)
-
-    if (error) {
-        console.error(`Error cargando ${tabla}:`, error)
-        return
-    }
-
-    data.forEach(item => {
-        const option = document.createElement('option')
-        option.value = item[valueKey]
-        option.textContent = item[textKey]
-
-        // Si el valor coincide, marcar como seleccionado
-        if (valorSeleccionado && item[valueKey] === valorSeleccionado) {
-            option.selected = true
-        }
-
-        select.appendChild(option)
-    })
-}
+import { cargarOpciones } from './funciones/cargar_select.js';
 
 // Función centralizada para obtener productos
 async function obtenerProductosCompletos() {

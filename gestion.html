@@ -51,15 +51,15 @@
                                         </div>
                                         <div class="movimiento col-md-4">
                                             <label for="producto" class="m-1">Producto</label>
-                                            <select id="producto" class="form-select" aria-label="Default select example">
+                                            <select id="producto" class="form-select" aria-label="Default select example" disabled>
                                                 <option value="0">Seleccione...</option>
 
                                             </select>
                                             <p class="error invalid-feedback" id="error-producto" style="color: red;"></p>
                                         </div>
                                         <div class="movimiento col-md-4">
-                                            <label for="tipo" class="m-1">Movimiento</label>
-                                            <select id="tipo" class="form-select" aria-label="Default select example">
+                                            <label for="movimiento" class="m-1">Movimiento</label>
+                                            <select id="movimiento" class="form-select" aria-label="Default select example">
                                                 <option value="0">Seleccione...</option>
                                                 <option value="Entrada">Entrada</option>
                                                 <option value="Salida por factura">Salida por factura</option>
@@ -67,7 +67,7 @@
                                                 <option value="Desarme">Desarme</option>
                                                 <option value="Traspaso a Comep">Traspaso a Comep</option>
                                             </select>
-                                            <p class="error invalid-feedback" id="error-tipo" style="color: red;"></p>
+                                            <p class="error invalid-feedback" id="error-movimiento" style="color: red;"></p>
                                         </div>
                                     </div>
                                     <div class="row mb-3">
@@ -98,9 +98,9 @@
                         <select class="form-select" id="filtro_tipo">
                             <option value="0">Todos</option>
                             <option value="fecha">Fecha</option>
-                            <option value="id_producto">Producto</option>
+                            <option value="codigo">Producto</option>
                             <option value="almacen">Almacén</option>
-                            <option value="tipo">Movimiento</option>
+                            <option value="tipo_movimiento">Movimiento</option>
                         </select>
                     </div>
                     <div class="col-md">
@@ -120,7 +120,7 @@
 
                 <!-- Tabla de registros -->
                 <div class="table-responsive mt-5">
-                    <table id="tabla_gestion" class="table table-bordered table-hover align-middle">
+                    <table id="tabla_movimientos" class="table table-bordered table-hover align-middle">
                         <thead>
                             <tr>
                                 <th>Fecha de registro</th>
@@ -211,6 +211,25 @@
         </div>
     </div>
 
+    <!-- Modal de confirmación para eliminar registro -->
+    <div class="modal fade" id="consulta_modal" aria-hidden="true" aria-labelledby="consulta_modalLabel" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="consulta_modalLabel">CONFIRMACIÓN</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Está seguro de querer eliminar el registro seleccionado?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary conf-btn" data-bs-target="#unidad_modal" data-bs-toggle="modal">No</button>
+                <button class="btn btn-primary conf-btn" id="btn_eliminar_entrada">Sí</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
     <!-- FOOTER -->
     <footer id="site_footer" class="d-print-none">
         
@@ -218,6 +237,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 <script src="./js/nav.js" type="module"></script>
-<script src="./js/gestion.js"></script>
+<script src="./js/gestion.js" type="module"></script>
 </body>
 </html>
