@@ -2,16 +2,16 @@
 // Declaramos las expresiones regulares para validar los datos
 const nombreRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/; // Expresión regular para el nombre
 const textoRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s.,-]+$/; // Expresión regular para texto
-const costoRegex = /^\d+(\.\d{1,2})?$/ // Expresión regular para los costos
+const cantidadRegex = /^\d+(\.\d{1,2})?$/ // Expresión regular para las cantidades
 
-// Función que valida que los id sean correctos
-export function validarId(data, error) {
+// Función que valida que los códigos sean correctos
+export function validarCodigo(data, error) {
     // Restablecer el mensaje de error y las clases antes de empezar
     error.textContent = '';
     data.classList.remove('is-invalid', 'is-valid');
 
     if ((data.value.length < 1) || (!textoRegex.test(data.value))) {
-        error.textContent = `* ID inválido`;
+        error.textContent = `* Código inválido`;
         data.classList.add('is-invalid');
         return; 
     }
@@ -62,9 +62,9 @@ export function validarNombre(data, error) {
 }
 
 // Función que valida que el costo sea válido
-export function validarCosto (costo, error){
-    if(!costoRegex.test(costo.value)){
-        error.textContent=`* El costo no es válido`;
+export function validarCantidad (costo, error){
+    if(!cantidadRegex.test(costo.value)){
+        error.textContent=`* La cantidad no es válida`;
         costo.classList.add('is-invalid');
         costo.classList.remove('is-valid');
     } else {

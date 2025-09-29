@@ -1,10 +1,10 @@
 
 import supabase from './supabase/supabase-client.js'
 import { validarCamposInvalidos, validarSelect } from "../js/validaciones/validar_campos.js"
-import { validarText, validarCosto } from "./validaciones/regex.js"
+import { validarText, validarCantidad } from "./validaciones/regex.js"
 import { cargarOpciones } from './funciones/cargar_select.js';
 
-// Función centralizada para obtener movimientoes
+// Función centralizada para obtener movimientos
 async function obtenerMovimientosCompletos() {
     const { data, error } = await supabase
         .from('movimientos')
@@ -220,29 +220,33 @@ document.getElementById('btn_add').addEventListener('click', async function(even
     event.preventDefault()
 
     // Obtener valores de inputs
+    const almacen = document.getElementById('almacen').value
     const id_producto = document.getElementById('producto').value
     const tipo_movimiento = document.getElementById('movimiento').value
     const cantidad = document.getElementById('cantidad').value
     const observaciones = document.getElementById('observaciones').value
 
     // Referencias para validación
+    const almacenIn = document.getElementById('almacen')
     const id_productoIn = document.getElementById('producto')
     const tipo_movimientoIn = document.getElementById('movimiento')
     const cantidadIn = document.getElementById('cantidad')
     const observacionesIn = document.getElementById('observaciones')
 
+    const error_almacen = document.getElementById('error-almacen')
     const error_producto = document.getElementById('error-producto')
     const error_movimiento = document.getElementById('error-movimiento')
     const error_cantidad = document.getElementById('error-cantidad')
     const error_observaciones = document.getElementById('error-observaciones')
 
     // Validaciones
+    validarSelect(almacenIn, error_almacen)
     validarSelect(id_productoIn, error_producto)
     validarSelect(tipo_movimientoIn, error_movimiento)
-    validarCosto(cantidadIn, error_cantidad)
+    validarCantidad(cantidadIn, error_cantidad)
     validarText(observacionesIn, error_observaciones)
 
-    if (!id_producto || !tipo_movimiento || !cantidad || !observaciones) {
+    if (!almacen || !id_producto || !tipo_movimiento || !cantidad || !observaciones) {
         alert('Por favor, complete todos los campos para agregar la entrada.')
         return
     }
@@ -312,7 +316,7 @@ document.getElementById('btn_guardar_cambios').addEventListener('click', async f
     const error_observaciones = document.getElementById('error-editObservaciones');
 
     // Validaciones
-    validarCosto(cantidadIn, error_cantidad)
+    validarCantidad(cantidadIn, error_cantidad)
     validarText(observacionesIn, error_observaciones)
 
     // Validar campos requeridos

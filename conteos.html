@@ -51,8 +51,7 @@
                                         </div>
                                         <div class="conteo col-md-3">
                                             <label for="producto" class="m-1">Producto</label>
-                                            <select id="producto" class="form-select" aria-label="Default select example">
-                                                <option value="0">Seleccione...</option>
+                                            <select id="producto" class="form-select" aria-label="Default select example" disabled>
 
                                             </select>
                                             <p class="error invalid-feedback" id="error-producto" style="color: red;"></p>
@@ -83,8 +82,8 @@
                         <label for="filtro_tipo" class="form-label filtro m-1">Filtrar por</label>
                         <select class="form-select" id="filtro_tipo">
                             <option value="0">Todos</option>
-                            <option value="fecha">Fecha</option>
-                            <option value="id_producto">Producto</option>
+                            <option value="fecha_conteo">Fecha</option>
+                            <option value="codigo">Producto</option>
                             <option value="almacen">Almacén</option>
                         </select>
                     </div>
@@ -105,7 +104,7 @@
 
                 <!-- Tabla de registros -->
                 <div class="table-responsive mt-5">
-                    <table id="tabla_gestion" class="table table-bordered table-hover align-middle">
+                    <table id="tabla_conteos" class="table table-bordered table-hover align-middle">
                         <thead>
                             <tr>
                                 <th>Fecha de registro</th>
@@ -188,6 +187,25 @@
         </div>
     </div>
 
+    <!-- Modal de confirmación para eliminar registro -->
+    <div class="modal fade" id="consulta_modal" aria-hidden="true" aria-labelledby="consulta_modalLabel" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="consulta_modalLabel">CONFIRMACIÓN</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Está seguro de querer eliminar el registro seleccionado?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary conf-btn" data-bs-target="#unidad_modal" data-bs-toggle="modal">No</button>
+                <button class="btn btn-primary conf-btn" id="btn_eliminar_entrada">Sí</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
     <!-- FOOTER -->
     <footer id="site_footer" class="d-print-none">
         
@@ -195,6 +213,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 <script src="./js/nav.js" type="module"></script>
-<script src="./js/conteos.js"></script>
+<script src="./js/conteos.js" type="module"></script>
 </body>
 </html>

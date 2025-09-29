@@ -1,7 +1,7 @@
 
 import supabase from './supabase/supabase-client.js'
 import { validarCamposInvalidos, validarSelect } from "../js/validaciones/validar_campos.js"
-import { validarText, validarId } from "./validaciones/regex.js"
+import { validarText, validarCodigo } from "./validaciones/regex.js"
 import { cargarOpciones } from './funciones/cargar_select.js';
 
 // Función centralizada para obtener productos
@@ -143,7 +143,7 @@ document.getElementById('btn_add').addEventListener('click', async function(even
     const error_descripcion = document.getElementById('error-descripcion')
 
     // Validaciones
-    validarId(codigoIn, error_codigo)
+    validarCodigo(codigoIn, error_codigo)
     validarText(nombreIn, error_nombre)
     validarSelect(id_almacenIn, error_almacen)
     validarText(descripcionIn, error_descripcion)
