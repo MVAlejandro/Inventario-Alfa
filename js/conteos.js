@@ -4,6 +4,19 @@ import { validarCamposInvalidos, validarSelect } from "../js/validaciones/valida
 import { validarText, validarCantidad } from "./validaciones/regex.js"
 import { cargarOpciones } from './funciones/cargar_select.js';
 
+// Función para calcular y asignar semana y año
+function getWeekAndYear(date = new Date()) {
+    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    const dayNum = d.getUTCDay() || 7; // lunes=1, domingo=7
+
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    const week = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    
+    return { semana: week, anio: d.getUTCFullYear() };
+}
+
 // Función centralizada para obtener conteos
 async function obtenerConteosCompletos() {
     const { data, error } = await supabase
@@ -11,6 +24,8 @@ async function obtenerConteosCompletos() {
         .select(`
             id_conteo,
             fecha_conteo,
+            semana_conteo,
+            anio_conteo,
             stock_real,
             observaciones,
             id_producto,
@@ -29,6 +44,8 @@ async function obtenerConteosCompletos() {
     return data.map(conteo => ({
         id_conteo: conteo.id_conteo,
         fecha_conteo: conteo.fecha_conteo,
+        semana_conteo: conteo.semana_conteo,
+        anio_conteo: conteo.anio_conteo,
         stock_real: conteo.stock_real,
         observaciones: conteo.observaciones,
         id_producto: conteo.id_producto,
@@ -40,7 +57,19 @@ async function obtenerConteosCompletos() {
 
 // Función para insertar un nuevo conteo en Supabase
 async function insertarConteo(conteo) {
-    const { data, error } = await supabase.from('conteos').insert([conteo])
+    // Calcular semana y año usando la fecha actual
+    const fecha_conteo = conteo.fecha_conteo ? new Date(conteo.fecha_conteo) : new Date();
+    const { semana, anio } = getWeekAndYear(fecha_conteo);
+
+    // Agregar semana, año y fecha al objeto a insertar
+    const conteoParaInsertar = {
+        ...conteo,
+        fecha_conteo: fecha_conteo.toISOString().split('T')[0], // YYYY-MM-DD
+        semana_conteo: semana,
+        anio_conteo: anio
+    };
+
+    const { data, error } = await supabase.from('conteos').insert([conteoParaInsertar]);
 
     if (error) {
         console.error(error)
@@ -76,8 +105,8 @@ document.getElementById('filtro_tipo').addEventListener('change', async function
 
     // Obtener valores únicos según el tipo
     switch (tipo) {
-        case 'fecha_conteo':
-            opciones = conteos.map(c => c.fecha_conteo);
+        case 'semana_conteo':
+            opciones = conteos.map(c => `${c.anio_conteo} - ${c.semana_conteo}`);
             break;
         case 'codigo':
             opciones = conteos.map(c => c.codigo);
@@ -128,8 +157,13 @@ document.getElementById('btn_filtro').addEventListener('click', async function (
 
         // Filtro por select dinámico
         if (tipo !== '0' && valorSeleccionado !== '0') {
-            const campo = c[tipo]?.toString().toLowerCase();
-            cumpleSelect = campo === valorSeleccionado.toLowerCase();
+            if (tipo === 'semana_conteo') {
+                const campoSemana = `${c.anio_conteo} - ${c.semana_conteo}`;
+                cumpleSelect = campoSemana === valorSeleccionado;
+            } else {
+                const campo = c[tipo]?.toString().toLowerCase();
+                cumpleSelect = campo === valorSeleccionado.toLowerCase();
+            }
         }
 
         // Filtro por búsqueda libre
@@ -158,7 +192,7 @@ function generarTablaConteos(conteos) {
     conteos.forEach(conteo => {
         tbody.innerHTML += 
         `<tr>
-            <th scope="row">${conteo.fecha_conteo}</th>
+            <th scope="row">${conteo.anio_conteo} / ${conteo.semana_conteo}</th>
             <td>${conteo.codigo}</td>
             <td>${conteo.almacen}</td>
             <td>${conteo.stock_real}</td>

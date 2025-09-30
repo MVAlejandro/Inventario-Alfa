@@ -41,21 +41,24 @@
                             <!-- Filtros -->
                             <div id="filtrosI" class="row d-flex mt-5">
                                 <div class="col">
-                                    <label for="fechaInicioI" class="form-label m-2">Fecha inicio</label>
-                                    <input type="date" id="fechaInicioI" class="form-control" placeholder="Fecha">
+                                    <label for="filtro_anioI" class="form-label m-2">Año</label>
+                                    <select class="form-select" id="filtro_anioI">
+                                        <!-- Opciones dinámicas de años -->
+                                    </select>
                                 </div>
                                 <div class="col">
-                                    <label for="fechaFinI" class="form-label m-2">Fecha fin</label>
-                                    <input type="date" id="fechaFinI" class="form-control" placeholder="Fecha">
-                                </div>
-                                <div class="col">
-                                    <label for="almacenI" class="form-label m-2">Almacén</label>
-                                    <select class="form-select" id="almacenI">
-                                        <option value="0">Seleccione...</option>
+                                    <label for="filtro_semanaI" class="form-label m-2">Semana</label>
+                                    <select class="form-select" id="filtro_semanaI" disabled>
 
                                     </select>
                                 </div>
-                                <div class="col d-flex align-items-center justify-content-end mt-2 ">
+                                <div class="col">
+                                    <label for="almacenI" class="form-label m-2">Almacén</label>
+                                    <select class="form-select" id="almacenI" disabled>
+
+                                    </select>
+                                </div>
+                                <div class="col d-flex align-items-center justify-content-end mt-2">
                                     <button id="btn_genI" class="btn btn-primary m-2">Generar</button>
                                     <button id="btn_printI" class="btn btn-primary">Imprimir</button>
                                 </div>
@@ -65,7 +68,7 @@
                                 <table id="reporteInd_tabla" class="table table-bordered table-hover align-middle">
                                     <thead>
                                         <tr>
-                                            <th>Fecha conteo</th>
+                                            <th>Año / Semana</th>
                                             <th>Producto</th>
                                             <th>Sistema</th>
                                             <th>Piso</th>
@@ -87,12 +90,16 @@
                             <!-- Filtros -->
                             <div id="filtrosG" class="row d-flex mt-5">
                                 <div class="col">
-                                    <label for="fechaInicioG" class="form-label m-2">Fecha inicio</label>
-                                    <input type="date" id="fechaInicioG" class="form-control" placeholder="Fecha">
+                                    <label for="filtro_anioG" class="form-label m-2">Año</label>
+                                    <select class="form-select" id="filtro_anioG">
+
+                                    </select>
                                 </div>
                                 <div class="col">
-                                    <label for="fechaFinG" class="form-label m-2">Fecha fin</label>
-                                    <input type="date" id="fechaFinG" class="form-control" placeholder="Fecha">
+                                    <label for="filtro_semanaG" class="form-label m-2">Semana</label>
+                                    <select class="form-select" id="filtro_semanaG" disabled>
+
+                                    </select>
                                 </div>
                                 <div class="col d-flex align-items-center justify-content-end mt-2 ">
                                     <button id="btn_genG" class="btn btn-primary m-2">Generar</button>
@@ -123,17 +130,20 @@
                             <!-- Filtros -->
                             <div id="filtrosE" class="row d-flex mt-5">
                                 <div class="col">
-                                    <label for="fechaInicioE" class="form-label m-2">Fecha inicio</label>
-                                    <input type="date" id="fechaInicioE" class="form-control" placeholder="Fecha">
+                                    <label for="filtro_anioE" class="form-label m-2">Año</label>
+                                    <select class="form-select" id="filtro_anioE">
+
+                                    </select>
                                 </div>
                                 <div class="col">
-                                    <label for="fechaFinE" class="form-label m-2">Fecha fin</label>
-                                    <input type="date" id="fechaFinE" class="form-control" placeholder="Fecha">
+                                    <label for="filtro_semanaE" class="form-label m-2">Semana</label>
+                                    <select class="form-select" id="filtro_semanaE" disabled>
+
+                                    </select>
                                 </div>
                                 <div class="col">
                                     <label for="estadoE" class="form-label m-2">Almacén</label>
                                     <select class="form-select" id="estadoE">
-                                        <option value="0">Todos</option>
 
                                     </select>
                                 </div>

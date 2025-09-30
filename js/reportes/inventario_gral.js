@@ -2,11 +2,11 @@
 import supabase from '../supabase/supabase-client.js'
 
 export async function generarInventarioGral() {
-    const inicioInput = document.getElementById('fechaInicioG').value;
-    const finInput = document.getElementById('fechaFinG').value;
+    const semanaSeleccionada = parseInt(document.getElementById('filtro_semanaG').value);
+    const anioSeleccionado = parseInt(document.getElementById('filtro_anioG').value);
 
     // Verificar si los filtros están vacíos
-    if (!inicioInput && !finInput) {
+    if (!semanaSeleccionada && !anioSeleccionado) {
         generarTablaInventarioGral([]);
         return;
     }
@@ -15,9 +15,9 @@ export async function generarInventarioGral() {
         // Obtener todos los movimientos en el rango de fechas
         const { data: movimientos, error: errorMov } = await supabase
             .from('movimientos')
-            .select('tipo_movimiento, cantidad, fecha')
-            .gte('fecha', inicioInput)
-            .lte('fecha', finInput);
+            .select('tipo_movimiento, cantidad, fecha, semana, anio')
+            .eq('semana', semanaSeleccionada)
+            .eq('anio', anioSeleccionado);
 
         if (errorMov) throw errorMov;
 
@@ -29,9 +29,9 @@ export async function generarInventarioGral() {
         // Obtener todos los conteos en el rango de fechas
         const { data: conteos, error: errorConteos } = await supabase
             .from('conteos')
-            .select('stock_real, fecha_conteo')
-            .gte('fecha_conteo', inicioInput)
-            .lte('fecha_conteo', finInput);
+            .select('stock_real, fecha_conteo, semana_conteo, anio_conteo')
+            .eq('semana_conteo', semanaSeleccionada)
+            .eq('anio_conteo', anioSeleccionado);
 
         if (errorConteos) throw errorConteos;
 
@@ -143,4 +143,59 @@ function generarTablaInventarioGral(resumen) {
             <td class="fw-bold ${claseDiferencia}">${resumen.diferencia}</td>
         </tr>
     `;
+}
+
+export async function cargarFiltrosG() {
+    const { data: conteos, error } = await supabase
+        .from('conteos')
+        .select('semana_conteo, anio_conteo');
+
+    if (error) {
+        console.error('Error cargando semanas/años:', error);
+        return;
+    }
+
+    // Agrupar semanas por año
+    const semanasPorAnio = {};
+    conteos.forEach(c => {
+        if (!semanasPorAnio[c.anio_conteo]) {
+            semanasPorAnio[c.anio_conteo] = new Set();
+        }
+        semanasPorAnio[c.anio_conteo].add(c.semana_conteo);
+    });
+
+    const selectAnio = document.getElementById('filtro_anioG');
+    const selectSemana = document.getElementById('filtro_semanaG');
+
+    // Llenar select de años
+    selectAnio.innerHTML = '<option value="0">Seleccione...</option>';
+    Object.keys(semanasPorAnio)
+        .sort((a, b) => b - a) // orden descendente
+        .forEach(anio => {
+            const option = document.createElement('option');
+            option.value = anio;
+            option.textContent = anio;
+            selectAnio.appendChild(option);
+        });
+
+    // Escuchar cuando se selecciona un año
+    selectAnio.addEventListener('change', function () {
+        const anioSeleccionado = this.value;
+
+        if (anioSeleccionado !== "0") {
+            const semanas = Array.from(semanasPorAnio[anioSeleccionado]).sort((a, b) => a - b);
+            selectSemana.disabled = false;
+            selectSemana.innerHTML = '<option value="0">Seleccione...</option>';
+
+            semanas.forEach(semana => {
+                const option = document.createElement('option');
+                option.value = semana;
+                option.textContent = `Semana ${semana}`;
+                selectSemana.appendChild(option);
+            });
+        } else {
+            selectSemana.disabled = true;
+            selectSemana.innerHTML = '<option value="0">Seleccione...</option>';
+        }
+    });
 }

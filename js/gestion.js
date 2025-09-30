@@ -4,6 +4,19 @@ import { validarCamposInvalidos, validarSelect } from "../js/validaciones/valida
 import { validarText, validarCantidad } from "./validaciones/regex.js"
 import { cargarOpciones } from './funciones/cargar_select.js';
 
+// Función para calcular y asignar semana y año
+function getWeekAndYear(date = new Date()) {
+    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    const dayNum = d.getUTCDay() || 7; // lunes=1, domingo=7
+
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    const week = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    
+    return { semana: week, anio: d.getUTCFullYear() };
+}
+
 // Función centralizada para obtener movimientos
 async function obtenerMovimientosCompletos() {
     const { data, error } = await supabase
@@ -13,6 +26,8 @@ async function obtenerMovimientosCompletos() {
             tipo_movimiento,
             cantidad,
             fecha,
+            semana,
+            anio,
             observaciones,
             id_producto,
             productos (
@@ -30,8 +45,10 @@ async function obtenerMovimientosCompletos() {
     return data.map(movimiento => ({
         id_movimiento: movimiento.id_movimiento,
         tipo_movimiento: movimiento.tipo_movimiento,
-        cantidad: movimiento.cantidad,                                   
+        cantidad: movimiento.cantidad,
         fecha: movimiento.fecha,
+        semana: movimiento.semana,
+        anio: movimiento.anio,
         observaciones: movimiento.observaciones,
         id_producto: movimiento.id_producto,
         codigo: movimiento.productos?.codigo,
@@ -42,16 +59,28 @@ async function obtenerMovimientosCompletos() {
 
 // Función para insertar un nuevo movimiento en Supabase
 async function insertarMovimiento(movimiento) {
-    const { data, error } = await supabase.from('movimientos').insert([movimiento])
+    // Calcular semana y año usando la fecha actual
+    const fecha = movimiento.fecha ? new Date(movimiento.fecha) : new Date();
+    const { semana, anio } = getWeekAndYear(fecha);
+
+    // Agregar semana, año y fecha al objeto a insertar
+    const movimientoParaInsertar = {
+        ...movimiento,
+        fecha: fecha.toISOString().split('T')[0], // YYYY-MM-DD
+        semana,
+        anio
+    };
+
+    const { data, error } = await supabase.from('movimientos').insert([movimientoParaInsertar]);
 
     if (error) {
-        console.error(error)
-        alert('Error al guardar el movimiento: ' + error.message)
+        console.error(error);
+        alert('Error al guardar el movimiento: ' + error.message);
     } else {
-        alert('Movimiento agregado con éxito')
-        generarTablaMovimientos() // actualizar listado
+        alert('Movimiento agregado con éxito');
+        generarTablaMovimientos(); // actualizar listado
         // Limpiar formulario
-        document.querySelector('form').reset()
+        document.querySelector('form').reset();
     }
 }
 
@@ -78,8 +107,8 @@ document.getElementById('filtro_tipo').addEventListener('change', async function
 
     // Obtener valores únicos según el tipo
     switch (tipo) {
-        case 'fecha':
-            opciones = movimientos.map(m => m.fecha);
+        case 'semana':
+            opciones = movimientos.map(m => `${m.anio} - ${m.semana}`);
             break;
         case 'codigo':
             opciones = movimientos.map(m => m.codigo);
@@ -116,7 +145,7 @@ document.getElementById('btn_filtro').addEventListener('click', async function (
     if (!movimientosProcesados) return;
 
     // Si no hay filtros activos, mostrar todo
-    const sinFiltros =
+    const sinFiltros = 
         tipo === '0' &&
         (!valorSeleccionado || valorSeleccionado === '0') &&
         textoBusqueda === '';
@@ -133,8 +162,13 @@ document.getElementById('btn_filtro').addEventListener('click', async function (
 
         // Filtro por select dinámico
         if (tipo !== '0' && valorSeleccionado !== '0') {
-            const campo = m[tipo]?.toString().toLowerCase();
-            cumpleSelect = campo === valorSeleccionado.toLowerCase();
+            if (tipo === 'semana') {
+                const campoSemana = `${m.anio} - ${m.semana}`;
+                cumpleSelect = campoSemana === valorSeleccionado;
+            } else {
+                const campo = m[tipo]?.toString().toLowerCase();
+                cumpleSelect = campo === valorSeleccionado.toLowerCase();
+            }
         }
 
         // Filtro por búsqueda libre
@@ -163,7 +197,7 @@ function generarTablaMovimientos(movimientos) {
     movimientos.forEach(movimiento => {
         tbody.innerHTML += 
         `<tr>
-            <th scope="row">${movimiento.fecha}</th>
+            <th scope="row">${movimiento.anio} / ${movimiento.semana}</th>
             <td>${movimiento.codigo}</td>
             <td>${movimiento.almacen}</td>
             <td>${movimiento.tipo_movimiento}</td>
