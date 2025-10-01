@@ -2,10 +2,10 @@
 import supabase from '../supabase/supabase-client.js'
 import { cargarAlmacenes } from './inventario_almacen.js';
 
-export async function generargraficoLineasstadisticas() {
+export async function generarEstadisticas() {
     // Tomar valores de los selects
     const anioSeleccionado = parseInt(document.getElementById('filtro_anioE').value);
-    const idAlmacen = document.getElementById('almacenE').value;
+    const filtroAlmacen = document.getElementById('almacenE').value;
     const tipoVisualizacion = document.getElementById('tipo_visualizacion').value;
 
     // Obtener todos los movimientos y conteos que hay
@@ -25,13 +25,13 @@ export async function generargraficoLineasstadisticas() {
 
     // Si hay filtrado por almacén, limitar productos
     let productosAlmacen = [];
-    if (idAlmacen && idAlmacen !== "0") {
-        const { data: productos } = await supabase.from('productos').select('id_producto').eq('id_almacen', idAlmacen);
+    if (filtroAlmacen && filtroAlmacen !== "0") {
+        const { data: productos } = await supabase.from('productos').select('id_producto').eq('id_almacen', filtroAlmacen);
         productosAlmacen = productos.map(p => p.id_producto);
     }
 
     let labels = [];
-    let asertividadData = [];
+    let confiabilidadData = [];
 
     if (tipoVisualizacion === 'semanas') {
         // Agrupar por semana
@@ -74,7 +74,7 @@ export async function generargraficoLineasstadisticas() {
             }
         });
 
-        // Ahora procesar conteos y calcular asertividad
+        // Ahora procesar conteos y calcular confiabilidad
         conteos.forEach(c => {
             if (productosAlmacen.length && !productosAlmacen.includes(c.id_producto)) return;
             const key = `${c.anio_conteo}-${c.semana_conteo}`;
@@ -104,7 +104,7 @@ export async function generargraficoLineasstadisticas() {
             labels.push(`Semana ${k.split('-')[1]}`);
             const { totalContado, totalSistema } = semanasMap[k];
             const valor = totalSistema ? (totalContado / totalSistema) * 100 : 0;
-            asertividadData.push(parseFloat(valor.toFixed(2)));
+            confiabilidadData.push(parseFloat(valor.toFixed(2)));
         });
 
     } else if (tipoVisualizacion === 'meses') {
@@ -189,7 +189,7 @@ export async function generargraficoLineasstadisticas() {
                 labels.push(`${nombresMeses[mesNumero - 1]} ${anio}`);
                 const { totalContado, totalSistema } = mesesMap[k];
                 const valor = totalSistema ? (totalContado / totalSistema) * 100 : 0;
-                asertividadData.push(parseFloat(valor.toFixed(2)));
+                confiabilidadData.push(parseFloat(valor.toFixed(2)));
             }
         });
     }
@@ -213,8 +213,8 @@ export async function generargraficoLineasstadisticas() {
         data: {
             labels: labels,
             datasets: [{
-                label: 'Asertividad',
-                data: asertividadData,
+                label: 'Confiabilidad',
+                data: confiabilidadData,
                 borderColor: 'rgba(75,192,192,1)',
                 backgroundColor: 'rgba(75,192,192,0.2)',
                 fill: true,
@@ -227,7 +227,7 @@ export async function generargraficoLineasstadisticas() {
                 y: {
                     beginAtZero: true,
                     max: 100,
-                    title: { display: true, text: 'Asertividad (%)' }
+                    title: { display: true, text: 'Confiabilidad (%)' }
                 },
                 x: {
                     title: { display: true, text: tituloEjeX }
@@ -280,7 +280,7 @@ export async function cargarFiltrosE(añoSel, almacenSel) {
             cargarAlmacenes(almacenSel);
         } else {
             selectAlmacen.disabled = true;
-            selectAlmacen.innerHTML = '<option value="0">Seleccione...</option>';
+            selectAlmacen.innerHTML = '<option value="0">Todos</option>';
         }
     });
 }

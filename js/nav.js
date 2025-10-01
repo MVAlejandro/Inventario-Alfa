@@ -17,7 +17,17 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Función para cerrar sesión con Supabase
+async function cerrarSesion() {
+    try {
+        const { error } = await supabase.auth.signOut();
+        if (error) console.error("Error al cerrar sesión:", error);
 
+        window.location.href = "./login.html";
+    } catch (error) {
+        console.error("Error inesperado al cerrar sesión:", error);
+        window.location.href = "./login.html";
+    }
+}
 
 // Crear barra superior
 function crearBarra(bar) {
@@ -28,7 +38,7 @@ function crearBarra(bar) {
         </div>`
     );
 
-    // document.getElementById("btn_logout").addEventListener("click", cerrarSesion);
+    document.getElementById("btn_logout").addEventListener("click", cerrarSesion);
 }
 
 // Crear header/navbar
@@ -53,9 +63,9 @@ function crearHeader(header) {
                 </button>
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
                     <ul class="navbar-nav">
-                        <li class="nav-item ms-2 me-2"><a class="nav-link nav-prin" href="./productos.html">Productos</a></li>
-                        <li class="nav-item ms-2 me-2"><a class="nav-link nav-prin" href="./gestion.html">Gestión</a></li>
-                        <li class="nav-item ms-2 me-2"><a class="nav-link nav-prin" href="./conteos.html">Inventario</a></li>
+                        <li class="nav-item ms-2 me-2" data-admin-only><a class="nav-link nav-prin" href="./productos.html">Productos</a></li>
+                        <li class="nav-item ms-2 me-2" data-admin-only><a class="nav-link nav-prin" href="./gestion.html">Gestión</a></li>
+                        <li class="nav-item ms-2 me-2" data-admin-only><a class="nav-link nav-prin" href="./conteos.html">Inventario</a></li>
                         <li class="nav-item ms-2 me-2"><a class="nav-link nav-prin" href="./reportes.html">Reportes</a></li>
                     </ul>
                 </div>

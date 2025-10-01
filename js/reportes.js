@@ -1,12 +1,12 @@
 
 // IMPORTACIÓN DE FUNCIONES EXTERNAS
-import { cargarFiltrosI, generarInventarioInd } from './reportes/inventario_almacen.js'
-import { cargarFiltrosG, generarInventarioGral } from './reportes/inventario_gral.js'
-import { cargarFiltrosE, generargraficoLineasstadisticas } from './reportes/inventario_grafico.js'
+import { cargarFiltros, generarInventarioInd } from './reportes/inventario_almacen.js'
+import { generarInventarioGral } from './reportes/inventario_gral.js'
+import { cargarFiltrosE, generarEstadisticas } from './reportes/inventario_grafico.js'
 
 // INVENTARIO POR ALMACEN
 document.addEventListener('DOMContentLoaded', () => {
-    cargarFiltrosI('filtro_anioI', 'filtro_semanaI', 'almacenI')
+    cargarFiltros('filtro_anioI', 'filtro_semanaI', 'almacenI')
 
     const btnGenerar = document.getElementById('btn_genI');
     btnGenerar.addEventListener('click', generarInventarioInd);
@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // INVENTARIO GENERAL
 document.addEventListener('DOMContentLoaded', () => {
-    cargarFiltrosG()
+    cargarFiltros('filtro_anioG', 'filtro_semanaG', 'almacenG')
 
     const btnGenerar = document.getElementById('btn_genG');
     btnGenerar.addEventListener('click', generarInventarioGral);
@@ -25,5 +25,5 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarFiltrosE('filtro_anioE', 'almacenE')
 
     const btnGenerar = document.getElementById('btn_genE');
-    btnGenerar.addEventListener('click', generargraficoLineasstadisticas);
+    btnGenerar.addEventListener('click', generarEstadisticas);
 });

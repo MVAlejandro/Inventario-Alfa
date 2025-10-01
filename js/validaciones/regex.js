@@ -1,7 +1,7 @@
 
 // Declaramos las expresiones regulares para validar los datos
 const nombreRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/; // Expresión regular para el nombre
-const textoRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s.,-]+$/; // Expresión regular para texto
+const textoRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s.,()-]+$/; // Expresión regular para texto
 const cantidadRegex = /^\d+(\.\d{1,2})?$/ // Expresión regular para las cantidades
 
 // Función que valida que los códigos sean correctos

@@ -1,0 +1,45 @@
+
+/* Fondo general */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f4f7fc; /* Fondo más suave */
+    font-family: 'Arial', sans-serif; /* Tipografía más moderna */
+}
+
+/* Estructura */
+main {
+    flex: 1;
+}
+
+/*--- BARRA DE NAVEGACION PRINCIPAL ---*/
+.navbar-nav, .cerrar_sesion {
+    display: none !important;
+}
+
+/*--- CONTENIDO PRINCIPAL ---*/
+/* Recuadro del formulario */
+.card {
+    animation: fadeInUp 0.8s ease;
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+    from {
+        opacity: 0; /* empieza invisible */
+        transform: translateY(20px); /* empieza 20px más abajo */
+    }
+    to {
+        opacity: 1; /* termina visible */
+        transform: translateY(0); /* termina en su posición original */
+    }
+}
+
+@media (max-width: 768px) {
+  #btn_login {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+    margin-right: 16px !important;
+  }
+}

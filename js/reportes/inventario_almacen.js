@@ -6,7 +6,7 @@ export async function cargarAlmacenes(almacenElement) {
     const { data, error } = await supabase.from('almacenes').select('id_almacen, nombre');
 
     const selectAlmacen = document.getElementById(almacenElement);
-    selectAlmacen.innerHTML = '<option value="0">Seleccione...</option>';
+    selectAlmacen.innerHTML = '<option value="0">Todos</option>';
 
     if (error) {
         console.error("Error cargando almacenes:", error);
@@ -28,19 +28,20 @@ export async function generarInventarioInd() {
     const almacenFiltro = document.getElementById('almacenI').value;
 
     // Verificar si los filtros están vacíos
-    if (!semanaSeleccionada && !anioSeleccionado && almacenFiltro === '0') {
+    if (!semanaSeleccionada && !anioSeleccionado) {
         generarTablaInventarioInd([]);
         return;
     }
 
     try {
-        // Traer productos con conteos filtrados por almacen
-        const { data: productos, error: errorProd } = await supabase
+        // Construir query de productos - condicional según filtro de almacén
+        let queryProductos = supabase
             .from('productos')
             .select(`
                 id_producto,
                 codigo,
                 id_almacen,
+                almacenes(nombre),
                 conteos (
                     id_conteo,
                     fecha_conteo,
@@ -48,9 +49,14 @@ export async function generarInventarioInd() {
                     anio_conteo,
                     stock_real
                 )
-            `)
-            .eq('id_almacen', parseInt(almacenFiltro));
+            `);
 
+        // Aplicar filtro de almacén solo si no es '0'
+        if (almacenFiltro && almacenFiltro !== "0") {
+            queryProductos = queryProductos.eq('id_almacen', parseInt(almacenFiltro));
+        }
+
+        const { data: productos, error: errorProd } = await queryProductos;
         if (errorProd) throw errorProd;
 
         // Filtrar productos que tengan conteos en la semana seleccionada
@@ -105,6 +111,7 @@ export async function generarInventarioInd() {
                     id_producto: producto.id_producto,
                     codigo: producto.codigo,
                     almacen: producto.id_almacen,
+                    almacen_nombre: producto.almacenes?.nombre,
                     fecha_conteo: conteo.fecha_conteo,
                     semana_conteo: conteo.semana_conteo,
                     anio_conteo: conteo.anio_conteo,
@@ -133,6 +140,22 @@ function generarTablaInventarioInd(productos) {
         return;
     }
 
+    // Calcular totales
+    const totalStockSistema = productos.reduce((sum, p) => sum + p.stock_sistema_hasta_conteo, 0);
+    const totalStockReal = productos.reduce((sum, p) => sum + p.stock_real, 0);
+    const totalDiferencia = productos.reduce((sum, p) => sum + p.diferencia, 0);
+
+    // Determinar clase CSS para el total de diferencia
+    let claseTotalDiferencia = '';
+    if (totalDiferencia > 0) {
+        claseTotalDiferencia = 'text-success'; // Verde para positivo
+    } else if (totalDiferencia < 0) {
+        claseTotalDiferencia = 'text-danger';  // Rojo para negativo
+    } else {
+        claseTotalDiferencia = 'text-muted';   // Gris para cero
+    }
+
+    // Generar filas de productos
     productos.forEach((p) => {
         const idProductos = p.id_producto;
         // Determinar clase CSS basada en la diferencia
@@ -150,14 +173,24 @@ function generarTablaInventarioInd(productos) {
         `<tr data-id-tarea="${idProductos}">
             <th scope="row">${p.anio_conteo} / ${p.semana_conteo}</th>
             <td>${p.codigo}</td>
+            <td>${p.almacen_nombre}</td>
             <td>${p.stock_sistema_hasta_conteo}</td>
             <td>${p.stock_real}</td>
             <td class="${claseDiferencia} fw-bold">${p.diferencia}</td>
         </tr>`;
     });
+
+    // Agregar fila de totales al final
+    tbody.innerHTML += 
+    `<tr class="table-active fw-bold">
+        <td colspan="3">TOTALES</td>
+        <td>${totalStockSistema}</td>
+        <td>${totalStockReal}</td>
+        <td class="${claseTotalDiferencia}">${totalDiferencia}</td>
+    </tr>`;
 }
 
-export async function cargarFiltrosI(añoSel, semanaSel, almacenSel) {
+export async function cargarFiltros(añoSel, semanaSel, almacenSel) {
     const { data: conteos, error } = await supabase
         .from('conteos')
         .select('semana_conteo, anio_conteo');
@@ -221,7 +254,7 @@ export async function cargarFiltrosI(añoSel, semanaSel, almacenSel) {
             cargarAlmacenes(almacenSel);
         } else {
             selectAlmacen.disabled = true;
-            selectAlmacen.innerHTML = '<option value="0">Seleccione...</option>';
+            selectAlmacen.innerHTML = '<option value="0">Todos</option>';
         }
     });
 }

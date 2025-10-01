@@ -5,6 +5,7 @@ export async function generarInventarioGral() {
     // Tomar valores de los selects
     const semanaSeleccionada = parseInt(document.getElementById('filtro_semanaG').value);
     const anioSeleccionado = parseInt(document.getElementById('filtro_anioG').value);
+    const filtroAlmacen = document.getElementById('almacenG').value;
 
     // Verificar si los filtros están vacíos
     if (!semanaSeleccionada && !anioSeleccionado) {
@@ -13,25 +14,59 @@ export async function generarInventarioGral() {
     }
 
     try {
-        // Obtener todos los movimientos
-        const { data: movimientos, error: errorMov } = await supabase
-            .from('movimientos')
-            .select('tipo_movimiento, cantidad, semana, anio');
+        // Obtener productos del almacén seleccionado (si hay filtro)
+        let productosAlmacen = [];
+        if (filtroAlmacen && filtroAlmacen !== "0") {
+            const { data: productos, error: errorProd } = await supabase
+                .from('productos')
+                .select('id_producto')
+                .eq('id_almacen', parseInt(filtroAlmacen));
+            
+            if (errorProd) throw errorProd;
+            productosAlmacen = productos.map(p => p.id_producto);
+        }
 
+        // Obtener todos los movimientos
+        let queryMovs = supabase
+            .from('movimientos')
+            .select('tipo_movimiento, cantidad, semana, anio, id_producto');
+
+        const { data: movimientos, error: errorMov } = await queryMovs;
         if (errorMov) throw errorMov;
 
         // Obtener todos los conteos
-        const { data: conteos, error: errorConteos } = await supabase
+        let queryConteos = supabase
             .from('conteos')
-            .select('stock_real, semana_conteo, anio_conteo');
+            .select('stock_real, semana_conteo, anio_conteo, id_producto');
 
+        const { data: conteos, error: errorConteos } = await queryConteos;
         if (errorConteos) throw errorConteos;
 
-        // Filtrar movimientos acumulados hasta la semana seleccionada
+        // Filtrar movimientos acumulados hasta la semana seleccionada y por almacén
         const movimientosAcumulados = movimientos.filter(m => {
             const semanaMov = parseInt(m.semana);
             const anioMov = parseInt(m.anio);
-            return anioMov < anioSeleccionado || (anioMov === anioSeleccionado && semanaMov <= semanaSeleccionada);
+            
+            // Filtro por fecha
+            const cumpleFecha = anioMov < anioSeleccionado || 
+                              (anioMov === anioSeleccionado && semanaMov <= semanaSeleccionada);
+            
+            // Filtro por almacén (si aplica)
+            const cumpleAlmacen = productosAlmacen.length === 0 || 
+                                productosAlmacen.includes(m.id_producto);
+            
+            return cumpleFecha && cumpleAlmacen;
+        });
+
+        // Filtrar conteos por semana y almacén
+        const conteosFiltrados = conteos.filter(c => {
+            const cumpleSemana = c.anio_conteo === anioSeleccionado && 
+                               c.semana_conteo === semanaSeleccionada;
+            
+            const cumpleAlmacen = productosAlmacen.length === 0 || 
+                                productosAlmacen.includes(c.id_producto);
+            
+            return cumpleSemana && cumpleAlmacen;
         });
 
         // Calcular sumatorias por tipo de movimiento
@@ -59,15 +94,13 @@ export async function generarInventarioGral() {
         const totalSistema = entradas - (salidasFactura + trasladosMesas + desarme + trasladosComep);
 
         // Total contado solo de la semana seleccionada
-        const totalContado = conteos
-            .filter(c => c.anio_conteo === anioSeleccionado && c.semana_conteo === semanaSeleccionada)
-            .reduce((sum, c) => sum + parseInt(c.stock_real), 0);
+        const totalContado = conteosFiltrados.reduce((sum, c) => sum + parseInt(c.stock_real), 0);
 
         // Diferencia
         const diferencia = totalContado - totalSistema;
 
-        // Calcular asertividad
-        const asertividad = totalSistema > 0 ? (totalContado / totalSistema) * 100 : 0;
+        // Calcular confiabilidad
+        const confiabilidad = totalSistema > 0 ? (totalContado / totalSistema) * 100 : 0;
 
         // Crear el objeto de resumen
         const resumen = {
@@ -79,7 +112,7 @@ export async function generarInventarioGral() {
             totalSistema,
             totalContado,
             diferencia,
-            asertividad
+            confiabilidad
         };
 
         // Generar tabla con el resumen
@@ -111,21 +144,19 @@ function generarTablaInventarioGral(resumen) {
         claseDiferencia = 'text-muted';   // Gris para cero
     }
 
-    // Determinar clase CSS para la asertividad
-    let claseAsertividad = '';
-    if (resumen.asertividad >= 95) {
-        claseAsertividad = 'text-success'; // Excelente (95-100%)
-    } else if (resumen.asertividad >= 90) {
-        claseAsertividad = 'text-warning'; // Bueno (90-94%)
-    } else if (resumen.asertividad >= 85) {
-        claseAsertividad = 'text-orange';  // Regular (85-89%)
+    // Determinar clase CSS para la confiabilidad
+    let claseConfiabilidad = '';
+    if (resumen.confiabilidad >= 95) {
+        claseConfiabilidad = 'text-success'; // Excelente (95-100%)
+    } else if (resumen.confiabilidad >= 85) {
+        claseConfiabilidad = 'text-warning'; // Bueno (85-94%)
     } else {
-        claseAsertividad = 'text-danger';  // Bajo (<85%)
+        claseConfiabilidad = 'text-danger';  // Bajo (<85%)
     }
 
     // Generar la tabla con el resumen por tipo de movimiento
-    tbody.innerHTML = `
-        <tr>
+    tbody.innerHTML = 
+        `<tr>
             <td class="fw-bold">ENTRADAS</td>
             <td>${resumen.entradas}</td>
         </tr>
@@ -158,63 +189,7 @@ function generarTablaInventarioGral(resumen) {
             <td class="fw-bold ${claseDiferencia}">${resumen.diferencia}</td>
         </tr>
         <tr class="table-info">
-            <td class="fw-bold">ASERTIVIDAD</td>
-            <td class="fw-bold ${claseAsertividad}">${resumen.asertividad.toFixed(2)}%</td>
-        </tr>
-    `;
-}
-
-export async function cargarFiltrosG() {
-    const { data: conteos, error } = await supabase
-        .from('conteos')
-        .select('semana_conteo, anio_conteo');
-
-    if (error) {
-        console.error('Error cargando semanas/años:', error);
-        return;
-    }
-
-    // Agrupar semanas por año
-    const semanasPorAnio = {};
-    conteos.forEach(c => {
-        if (!semanasPorAnio[c.anio_conteo]) {
-            semanasPorAnio[c.anio_conteo] = new Set();
-        }
-        semanasPorAnio[c.anio_conteo].add(c.semana_conteo);
-    });
-
-    const selectAnio = document.getElementById('filtro_anioG');
-    const selectSemana = document.getElementById('filtro_semanaG');
-
-    // Llenar select de años
-    selectAnio.innerHTML = '<option value="0">Seleccione...</option>';
-    Object.keys(semanasPorAnio)
-        .sort((a, b) => b - a) // orden descendente
-        .forEach(anio => {
-            const option = document.createElement('option');
-            option.value = anio;
-            option.textContent = anio;
-            selectAnio.appendChild(option);
-        });
-
-    // Escuchar cuando se selecciona un año
-    selectAnio.addEventListener('change', function () {
-        const anioSeleccionado = this.value;
-
-        if (anioSeleccionado !== "0") {
-            const semanas = Array.from(semanasPorAnio[anioSeleccionado]).sort((a, b) => a - b);
-            selectSemana.disabled = false;
-            selectSemana.innerHTML = '<option value="0">Seleccione...</option>';
-
-            semanas.forEach(semana => {
-                const option = document.createElement('option');
-                option.value = semana;
-                option.textContent = `Semana ${semana}`;
-                selectSemana.appendChild(option);
-            });
-        } else {
-            selectSemana.disabled = true;
-            selectSemana.innerHTML = '<option value="0">Seleccione...</option>';
-        }
-    });
+            <td class="fw-bold">CONFIABILIDAD</td>
+            <td class="fw-bold ${claseConfiabilidad}">${resumen.confiabilidad.toFixed(2)}%</td>
+        </tr>`;
 }
