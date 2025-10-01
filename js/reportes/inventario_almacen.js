@@ -157,7 +157,7 @@ function generarTablaInventarioInd(productos) {
     });
 }
 
-export async function cargarFiltrosI() {
+export async function cargarFiltrosI(añoSel, semanaSel, almacenSel) {
     const { data: conteos, error } = await supabase
         .from('conteos')
         .select('semana_conteo, anio_conteo');
@@ -176,9 +176,9 @@ export async function cargarFiltrosI() {
         semanasPorAnio[c.anio_conteo].add(c.semana_conteo);
     });
 
-    const selectAnio = document.getElementById('filtro_anioI');
-    const selectSemana = document.getElementById('filtro_semanaI');
-    const selectAlmacen = document.getElementById('almacenI');
+    const selectAnio = document.getElementById(añoSel);
+    const selectSemana = document.getElementById(semanaSel);
+    const selectAlmacen = document.getElementById(almacenSel);
 
     // Llenar select de años
     selectAnio.innerHTML = '<option value="0">Seleccione...</option>';
@@ -218,7 +218,7 @@ export async function cargarFiltrosI() {
     selectSemana.addEventListener('change', function () {
         if (this.value !== "0") {
             selectAlmacen.disabled = false;
-            cargarAlmacenes('almacenI');
+            cargarAlmacenes(almacenSel);
         } else {
             selectAlmacen.disabled = true;
             selectAlmacen.innerHTML = '<option value="0">Seleccione...</option>';

@@ -2,6 +2,7 @@
 import supabase from '../supabase/supabase-client.js'
 
 export async function generarInventarioGral() {
+    // Tomar valores de los selects
     const semanaSeleccionada = parseInt(document.getElementById('filtro_semanaG').value);
     const anioSeleccionado = parseInt(document.getElementById('filtro_anioG').value);
 
@@ -12,60 +13,61 @@ export async function generarInventarioGral() {
     }
 
     try {
-        // Obtener todos los movimientos en el rango de fechas
+        // Obtener todos los movimientos
         const { data: movimientos, error: errorMov } = await supabase
             .from('movimientos')
-            .select('tipo_movimiento, cantidad, fecha, semana, anio')
-            .eq('semana', semanaSeleccionada)
-            .eq('anio', anioSeleccionado);
+            .select('tipo_movimiento, cantidad, semana, anio');
 
         if (errorMov) throw errorMov;
 
-        if (!movimientos || movimientos.length === 0) {
-            generarTablaInventarioGral([]);
-            return;
-        }
-
-        // Obtener todos los conteos en el rango de fechas
+        // Obtener todos los conteos
         const { data: conteos, error: errorConteos } = await supabase
             .from('conteos')
-            .select('stock_real, fecha_conteo, semana_conteo, anio_conteo')
-            .eq('semana_conteo', semanaSeleccionada)
-            .eq('anio_conteo', anioSeleccionado);
+            .select('stock_real, semana_conteo, anio_conteo');
 
         if (errorConteos) throw errorConteos;
 
+        // Filtrar movimientos acumulados hasta la semana seleccionada
+        const movimientosAcumulados = movimientos.filter(m => {
+            const semanaMov = parseInt(m.semana);
+            const anioMov = parseInt(m.anio);
+            return anioMov < anioSeleccionado || (anioMov === anioSeleccionado && semanaMov <= semanaSeleccionada);
+        });
+
         // Calcular sumatorias por tipo de movimiento
-        const entradas = movimientos
+        const entradas = movimientosAcumulados
             .filter(m => m.tipo_movimiento === 'Entrada')
             .reduce((sum, m) => sum + parseInt(m.cantidad), 0);
 
-        const salidasFactura = movimientos
+        const salidasFactura = movimientosAcumulados
             .filter(m => m.tipo_movimiento === 'Salida por factura')
             .reduce((sum, m) => sum + parseInt(m.cantidad), 0);
 
-        const trasladosMesas = movimientos
+        const trasladosMesas = movimientosAcumulados
             .filter(m => m.tipo_movimiento === 'Traspaso a mesas')
             .reduce((sum, m) => sum + parseInt(m.cantidad), 0);
 
-        const desarme = movimientos
+        const desarme = movimientosAcumulados
             .filter(m => m.tipo_movimiento === 'Desarme')
             .reduce((sum, m) => sum + parseInt(m.cantidad), 0);
 
-        const trasladosComep = movimientos
+        const trasladosComep = movimientosAcumulados
             .filter(m => m.tipo_movimiento === 'Traspaso a Comep')
             .reduce((sum, m) => sum + parseInt(m.cantidad), 0);
 
-        // Calcular total en sistema (Entradas - Salidas)
+        // Total en sistema acumulado
         const totalSistema = entradas - (salidasFactura + trasladosMesas + desarme + trasladosComep);
 
-        // Calcular total contado (suma de todos los conteos físicos)
-        const totalContado = conteos 
-            ? conteos.reduce((sum, conteo) => sum + parseInt(conteo.stock_real), 0)
-            : 0;
+        // Total contado solo de la semana seleccionada
+        const totalContado = conteos
+            .filter(c => c.anio_conteo === anioSeleccionado && c.semana_conteo === semanaSeleccionada)
+            .reduce((sum, c) => sum + parseInt(c.stock_real), 0);
 
-        // Calcular diferencia
+        // Diferencia
         const diferencia = totalContado - totalSistema;
+
+        // Calcular asertividad
+        const asertividad = totalSistema > 0 ? (totalContado / totalSistema) * 100 : 0;
 
         // Crear el objeto de resumen
         const resumen = {
@@ -76,10 +78,11 @@ export async function generarInventarioGral() {
             trasladosComep,
             totalSistema,
             totalContado,
-            diferencia
+            diferencia,
+            asertividad
         };
 
-        // Llamar a la función que genera la tabla con el resumen
+        // Generar tabla con el resumen
         generarTablaInventarioGral(resumen);
 
     } catch (error) {
@@ -106,6 +109,18 @@ function generarTablaInventarioGral(resumen) {
         claseDiferencia = 'text-danger';  // Rojo para negativo
     } else {
         claseDiferencia = 'text-muted';   // Gris para cero
+    }
+
+    // Determinar clase CSS para la asertividad
+    let claseAsertividad = '';
+    if (resumen.asertividad >= 95) {
+        claseAsertividad = 'text-success'; // Excelente (95-100%)
+    } else if (resumen.asertividad >= 90) {
+        claseAsertividad = 'text-warning'; // Bueno (90-94%)
+    } else if (resumen.asertividad >= 85) {
+        claseAsertividad = 'text-orange';  // Regular (85-89%)
+    } else {
+        claseAsertividad = 'text-danger';  // Bajo (<85%)
     }
 
     // Generar la tabla con el resumen por tipo de movimiento
@@ -141,6 +156,10 @@ function generarTablaInventarioGral(resumen) {
         <tr class="table-active">
             <td class="fw-bold">DIFERENCIA</td>
             <td class="fw-bold ${claseDiferencia}">${resumen.diferencia}</td>
+        </tr>
+        <tr class="table-info">
+            <td class="fw-bold">ASERTIVIDAD</td>
+            <td class="fw-bold ${claseAsertividad}">${resumen.asertividad.toFixed(2)}%</td>
         </tr>
     `;
 }
