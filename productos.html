@@ -39,36 +39,74 @@
                         </h2>
                         <div id="collapseFormulario" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
-                                <form class="container">
-                                    <div class="row mb-3">
-                                        <div class="producto col-md-2">
-                                            <label for="codigo" class="m-1">Código</label>
-                                            <input type="text" id="codigo" class="form-control" placeholder="Código">
-                                            <p class="error invalid-feedback" id="error-codigo" style="color: red;"></p>
+                                <div class="container">
+                                    <!-- Tabs de formulario -->
+                                    <div class="controls btn-group mb-3">
+                                        <div class="nav nav-pills" id="ganttTabs" role="tablist">
+                                            <button class="nav-link tab-btn active" id="excel-tab" data-bs-toggle="pill" data-bs-target="#tab_form_excel" type="button" role="tab">Excel</button>
+                                            <button class="nav-link tab-btn" id="manual-tab" data-bs-toggle="pill" data-bs-target="#tab_form_manual" type="button" role="tab">Manual</button>
                                         </div>
-                                        <div class="producto col-md-3">
-                                            <label for="nombre_p" class="m-1">Nombre</label>
-                                            <input type="text" id="nombre_p" class="form-control" placeholder="Nombre">
-                                            <p class="error invalid-feedback" id="error-nombre" style="color: red;"></p>
-                                        </div>
-                                        <div class="producto col-md-2">
-                                            <label for="almacen" class="m-1">Almacén</label>
-                                            <select id="almacen" class="form-select" aria-label="Default select example">
-                                                <option value="0">Seleccione...</option>
-
-                                            </select>
-                                            <p class="error invalid-feedback" id="error-almacen" style="color: red;"></p>
-                                        </div>
-                                        <div class="producto col-md-5">
-                                            <label for="descripcion" class="m-1">Descripción</label>
-                                            <input type="text" id="descripcion" class="form-control" placeholder="Descripción">
-                                            <p class="error invalid-feedback" id="error-descripcion" style="color: red;"></p>
-                                        </div>
-                                    </div>  
-                                    <div class="d-flex justify-content-end mt-4">
-                                        <button id="btn_add" type="button" class="btn btn-primary">Agregar</button>
                                     </div>
-                                </form>
+                                    <div class="tab-content" id="planeacionTabsContent">
+                                        <!-- Tab de Excel -->
+                                        <div class="tab-pane fade show active" id="tab_form_excel" role="tabpanel">
+                                            <form id="form_excel">
+                                                <div class="row mb-3">
+                                                    <div class="producto col-md-2">
+                                                        <label for="almacen_excel" class="m-1">Almacén</label>
+                                                        <select id="almacen_excel" class="form-select" aria-label="Default select example">
+                                                            <option value="0">Seleccione...</option>
+
+                                                        </select>
+                                                        <p class="error invalid-feedback" id="error-almacen_excel" style="color: red;"></p>
+                                                    </div>
+                                                    <div class="producto col-md-10">
+                                                        <label for="datos_excel" class="m-1">Datos del producto</label>
+                                                        <textarea id="datos_excel" class="form-control" rows="2" placeholder="Ingrese los datos desde Excel con formato:  'Código, Nombre, Descripción'"></textarea>
+                                                        <p class="error invalid-feedback" id="error-datos_excel" style="color: red;"></p>
+                                                    </div>
+                                                </div>  
+                                                <div class="d-flex justify-content-end mt-4">
+                                                    <button id="btn_add_excel" type="button" class="btn btn-primary">Agregar</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <!-- Tab de llenado manual -->
+                                        <div class="tab-pane fade" id="tab_form_manual" role="tabpanel">
+                                            <form id="form_manual">
+                                                <div class="row mb-3">
+                                                    <div class="producto col-md-2">
+                                                        <label for="codigo_manual" class="m-1">Código</label>
+                                                        <input type="text" id="codigo_manual" class="form-control" placeholder="Código">
+                                                        <p class="error invalid-feedback" id="error-codigo_manual" style="color: red;"></p>
+                                                    </div>
+                                                    <div class="producto col-md-3">
+                                                        <label for="nombre_p_manual" class="m-1">Nombre</label>
+                                                        <input type="text" id="nombre_p_manual" class="form-control" placeholder="Nombre">
+                                                        <p class="error invalid-feedback" id="error-nombre_manual" style="color: red;"></p>
+                                                    </div>
+                                                    <div class="producto col-md-2">
+                                                        <label for="almacen_manual" class="m-1">Almacén</label>
+                                                        <select id="almacen_manual" class="form-select" aria-label="Default select example">
+                                                            <option value="0">Seleccione...</option>
+
+                                                        </select>
+                                                        <p class="error invalid-feedback" id="error-almacen_manual" style="color: red;"></p>
+                                                    </div>
+                                                    <div class="producto col-md-5">
+                                                        <label for="descripcion_manual" class="m-1">Descripción</label>
+                                                        <input type="text" id="descripcion_manual" class="form-control" placeholder="Descripción">
+                                                        <p class="error invalid-feedback" id="error-descripcion_manual" style="color: red;"></p>
+                                                    </div>
+                                                </div>  
+                                                <div class="d-flex justify-content-end mt-4">
+                                                    <button id="btn_add_manual" type="button" class="btn btn-primary">Agregar</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -46,8 +46,6 @@ async function insertarProducto(producto) {
     } else {
         alert('Producto agregado con éxito')
         generarTablaProductos() // actualizar listado
-        // Limpiar formulario
-        document.querySelector('form').reset()
     }
 }
 
@@ -121,26 +119,96 @@ function generarTablaProductos(productos) {
     });
 }
 
-// Evento al dar click al botón Agregar Producto
-document.getElementById('btn_add').addEventListener('click', async function(event) {
+// Evento al dar click al botón Agregar Producto Manual
+document.getElementById('btn_add_excel').addEventListener('click', async function(event) {
     event.preventDefault()
+    const formulario = document.getElementById('form_excel');
 
     // Obtener valores de inputs
-    const codigo = document.getElementById('codigo').value
-    const nombre = document.getElementById('nombre_p').value
-    const id_almacen = document.getElementById('almacen').value
-    const descripcion = document.getElementById('descripcion').value
+    const id_almacen = document.getElementById('almacen_excel').value
+    const texto_datos = document.getElementById('datos_excel').value
 
     // Referencias para validación
-    const codigoIn = document.getElementById('codigo')
-    const nombreIn = document.getElementById('nombre_p')
-    const id_almacenIn = document.getElementById('almacen')
-    const descripcionIn = document.getElementById('descripcion')
+    const id_almacenIn = document.getElementById('almacen_excel')
+    const texto_datosIn = document.getElementById('datos_excel')
 
-    const error_codigo = document.getElementById('error-codigo')
-    const error_nombre = document.getElementById('error-nombre')
-    const error_almacen = document.getElementById('error-almacen')
-    const error_descripcion = document.getElementById('error-descripcion')
+    const error_almacen = document.getElementById('error-almacen_excel')
+    const error_texto_datos = document.getElementById('error-datos_excel')
+
+    // Validaciones
+    validarSelect(id_almacenIn, error_almacen)
+    validarText(texto_datosIn, error_texto_datos)
+
+    if (!id_almacen || !texto_datos) {
+        alert('Por favor, complete todos los campos para agregar la entrada.')
+        return
+    }
+
+    const campos = document.querySelectorAll('input, select')
+    if (!validarCamposInvalidos(campos)) {
+        alert('Corrige los errores antes de guardar.')
+        return
+    }
+
+    let fecha_creacion = new Date().toISOString().split('T')[0];
+
+    // Divide y filtra filas no vacías
+    const filas = texto_datos
+        .split('\n')
+        .map(fila => fila.trim())
+        .filter(fila => fila !== '');
+
+    // Validar que solo haya una fila (una línea)
+    if (filas.length !== 1) {
+        alert('Solo se puede agregar un producto a la vez.');
+        return;
+    }
+
+    const columnas = filas[0].split('\t');
+    if (columnas.length < 3) {
+        alert('El formato del producto es incorrecto. Asegúrate de seguir el formato: Código, Nombre, Descripción.');
+        return;
+    }
+
+    const codigo = columnas[0].trim();
+    const nombre = columnas[1].trim();
+    const descripcion = columnas[2].trim();
+
+    // Insertar en Supabase y reiniciar formulario
+    const nuevoProducto = { codigo, nombre, descripcion, id_almacen, fecha_creacion };
+    await insertarProducto(nuevoProducto);
+    formulario.reset();
+    // Eliminar validaciones visuales
+    formulario.querySelectorAll('.is-valid, .is-invalid').forEach(el => {
+        el.classList.remove('is-valid', 'is-invalid');
+    });
+
+    // Recargar tabla con datos actualizados
+    const productosActualizados = await obtenerProductosCompletos();
+    generarTablaProductos(productosActualizados);
+});
+
+// Evento al dar click al botón Agregar Producto Manual
+document.getElementById('btn_add_manual').addEventListener('click', async function(event) {
+    event.preventDefault()
+    const formulario = document.getElementById('form_manual');
+
+    // Obtener valores de inputs
+    const codigo = document.getElementById('codigo_manual').value
+    const nombre = document.getElementById('nombre_p_manual').value
+    const id_almacen = document.getElementById('almacen_manual').value
+    const descripcion = document.getElementById('descripcion_manual').value
+
+    // Referencias para validación
+    const codigoIn = document.getElementById('codigo_manual')
+    const nombreIn = document.getElementById('nombre_p_manual')
+    const id_almacenIn = document.getElementById('almacen_manual')
+    const descripcionIn = document.getElementById('descripcion_manual')
+
+    const error_codigo = document.getElementById('error-codigo_manual')
+    const error_nombre = document.getElementById('error-nombre_manual')
+    const error_almacen = document.getElementById('error-almacen_manual')
+    const error_descripcion = document.getElementById('error-descripcion_manual')
 
     // Validaciones
     validarCodigo(codigoIn, error_codigo)
@@ -161,9 +229,14 @@ document.getElementById('btn_add').addEventListener('click', async function(even
 
     let fecha_creacion = new Date().toISOString().split('T')[0];
 
-    // Insertar en Supabase
+    // Insertar en Supabase y reiniciar formulario
     const nuevoProducto = { codigo, nombre, id_almacen, descripcion, fecha_creacion }
     await insertarProducto(nuevoProducto)
+    formulario.reset();
+    // Eliminar validaciones visuales
+    formulario.querySelectorAll('.is-valid, .is-invalid').forEach(el => {
+        el.classList.remove('is-valid', 'is-invalid');
+    });
 
     // Recarga la tabla con los datos actualizados
     const productosActualizadas = await obtenerProductosCompletos();
@@ -172,12 +245,13 @@ document.getElementById('btn_add').addEventListener('click', async function(even
 
 // Cargar los almacenes al iniciar la página
 document.addEventListener('DOMContentLoaded', async () => {
-    cargarOpciones('almacen', 'almacenes', 'id_almacen', 'nombre')
+    cargarOpciones('almacen_excel', 'almacenes', 'id_almacen', 'nombre')
+    cargarOpciones('almacen_manual', 'almacenes', 'id_almacen', 'nombre')
     generarTablaProductos()
 
-    const productosProcesadas = await obtenerProductosCompletos();
-    if (productosProcesadas) {
-        generarTablaProductos(productosProcesadas);
+    const productosProcesados = await obtenerProductosCompletos();
+    if (productosProcesados) {
+        generarTablaProductos(productosProcesados);
     }
 })
 

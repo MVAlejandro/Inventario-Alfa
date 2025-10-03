@@ -14,7 +14,7 @@ main {
 }
 
 /*--- BARRA DE NAVEGACION PRINCIPAL ---*/
-.navbar-nav, .cerrar_sesion {
+.navbar-nav, .navbar-toggler, .cerrar_sesion {
     display: none !important;
 }
 
