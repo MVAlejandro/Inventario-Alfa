@@ -39,52 +39,86 @@
                         </h2>
                         <div id="collapseFormulario" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
-                                <form class="container">
-                                    <div class="row mb-3">
-                                        <div class="movimiento col-md-4">
-                                            <label for="almacen" class="m-1">Almacén</label>
-                                            <select id="almacen" class="form-select" aria-label="Default select example">
-                                                <option value="0">Seleccione...</option>
+                                <div class="container">
+                                    <!-- Tabs de formulario -->
+                                    <div class="controls btn-group mb-3">
+                                        <div class="nav nav-pills" id="ganttTabs" role="tablist">
+                                            <button class="nav-link tab-btn active" id="excel-tab" data-bs-toggle="pill" data-bs-target="#tab_form_excel" type="button" role="tab">Excel</button>
+                                            <button class="nav-link tab-btn" id="manual-tab" data-bs-toggle="pill" data-bs-target="#tab_form_manual" type="button" role="tab">Manual</button>
+                                        </div>
+                                    </div>
+                                    <div class="tab-content" id="planeacionTabsContent">
+                                        <!-- Tab de Excel -->
+                                        <div class="tab-pane fade show active" id="tab_form_excel" role="tabpanel">
+                                            <form id="form_excel">
+                                                <div class="row mb-3">
+                                                    <div class="movimiento col">
+                                                        <label for="datos_excel" class="m-1">Datos del producto</label>
+                                                        <textarea id="datos_excel" class="form-control" rows="2" placeholder="Ingrese los datos desde Excel con formato:  'Código, Almacén, Tipo, Movimiento, Cantidad, Observaciones'"></textarea>
+                                                        <p class="error invalid-feedback" id="error-datos_excel" style="color: red;"></p>
+                                                    </div>
+                                                </div>  
+                                                <div class="d-flex justify-content-end mt-4">
+                                                    <button id="btn_add_excel" type="button" class="btn btn-primary">Agregar</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <!-- Tab de llenado manual -->
+                                        <div class="tab-pane fade" id="tab_form_manual" role="tabpanel">
+                                            <form id="form_manual">
+                                                <div class="row mb-3">
+                                                    <div class="movimiento col-md-3">
+                                                        <label for="almacen_manual" class="m-1">Almacén</label>
+                                                        <select id="almacen_manual" class="form-select" aria-label="Default select example">
+                                                            <option value="0">Seleccione...</option>
 
-                                            </select>
-                                            <p class="error invalid-feedback" id="error-almacen" style="color: red;"></p>
-                                        </div>
-                                        <div class="movimiento col-md-4">
-                                            <label for="producto" class="m-1">Producto</label>
-                                            <select id="producto" class="form-select" aria-label="Default select example" disabled>
+                                                        </select>
+                                                        <p class="error invalid-feedback" id="error-almacen_manual" style="color: red;"></p>
+                                                    </div>
+                                                    <div class="movimiento col-md-3">
+                                                        <label for="producto_manual" class="m-1">Producto</label>
+                                                        <select id="producto_manual" class="form-select" aria-label="Default select example" disabled>
 
-                                            </select>
-                                            <p class="error invalid-feedback" id="error-producto" style="color: red;"></p>
-                                        </div>
-                                        <div class="movimiento col-md-4">
-                                            <label for="movimiento" class="m-1">Movimiento</label>
-                                            <select id="movimiento" class="form-select" aria-label="Default select example">
-                                                <option value="0">Seleccione...</option>
-                                                <option value="Entrada">Entrada</option>
-                                                <option value="Salida por factura">Salida por factura</option>
-                                                <option value="Traspaso a mesas">Traspaso a mesas</option>
-                                                <option value="Desarme">Desarme</option>
-                                                <option value="Traspaso a Comep">Traspaso a Comep</option>
-                                            </select>
-                                            <p class="error invalid-feedback" id="error-movimiento" style="color: red;"></p>
+                                                        </select>
+                                                        <p class="error invalid-feedback" id="error-producto_manual" style="color: red;"></p>
+                                                    </div>
+                                                    <div class="movimiento col-md-2">
+                                                        <label for="tipo_movimiento_manual" class="m-1">Tipo</label>
+                                                        <select id="tipo_movimiento_manual" class="form-select" aria-label="Default select example">
+                                                            <option value="0">Seleccione...</option>
+                                                            <option value="Entrada">Entrada</option>
+                                                            <option value="Salida">Salida</option>
+                                                        </select>
+                                                        <p class="error invalid-feedback" id="error-tipo_movimiento_manual" style="color: red;"></p>
+                                                    </div>
+                                                    <div class="movimiento col-md-4">
+                                                        <label for="movimiento_manual" class="m-1">Movimiento</label>
+                                                        <select id="movimiento_manual" class="form-select" aria-label="Default select example" disabled>
+
+                                                        </select>
+                                                        <p class="error invalid-feedback" id="error-movimiento_manual" style="color: red;"></p>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="movimiento col-md-2">
+                                                        <label for="cantidad_manual" class="m-1">Cantidad</label>
+                                                        <input type="number" id="cantidad_manual" class="form-control no-arrows" placeholder="Cantidad">
+                                                        <p class="error invalid-feedback" id="error-cantidad_manual" style="color: red;"></p>
+                                                    </div>
+                                                    <div class="movimiento col-md-10">
+                                                        <label for="observaciones_manual" class="m-1">Observaciones</label>
+                                                        <input type="text" id="observaciones_manual" class="form-control" placeholder="Observaciones">
+                                                        <p class="error invalid-feedback" id="error-observaciones_manual" style="color: red;"></p>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex justify-content-end mt-4">
+                                                    <button id="btn_add_manual" type="button" class="btn btn-primary">Agregar</button>
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
-                                    <div class="row mb-3">
-                                        <div class="movimiento col-md-2">
-                                            <label for="cantidad" class="m-1">Cantidad</label>
-                                            <input type="number" id="cantidad" class="form-control no-arrows" placeholder="Cantidad">
-                                            <p class="error invalid-feedback" id="error-cantidad" style="color: red;"></p>
-                                        </div>
-                                        <div class="movimiento col-md-10">
-                                            <label for="observaciones" class="m-1">Observaciones</label>
-                                            <input type="text" id="observaciones" class="form-control" placeholder="Observaciones">
-                                            <p class="error invalid-feedback" id="error-observaciones" style="color: red;"></p>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex justify-content-end mt-4">
-                                        <button id="btn_add" type="button" class="btn btn-primary">Agregar</button>
-                                    </div>
-                                </form>
+
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -99,7 +133,7 @@
                             <option value="semana">Semana</option>
                             <option value="codigo">Producto</option>
                             <option value="almacen">Almacén</option>
-                            <option value="tipo_movimiento">Movimiento</option>
+                            <option value="nombre_movimiento">Movimiento</option>
                         </select>
                     </div>
                     <div class="col-md">

@@ -150,8 +150,6 @@ document.getElementById('btn_add_excel').addEventListener('click', async functio
         return
     }
 
-    let fecha_creacion = new Date().toISOString().split('T')[0];
-
     // Divide y filtra filas no vacías
     const filas = texto_datos
         .split('\n')
@@ -173,7 +171,8 @@ document.getElementById('btn_add_excel').addEventListener('click', async functio
     const codigo = columnas[0].trim();
     const nombre = columnas[1].trim();
     const descripcion = columnas[2].trim();
-
+    let fecha_creacion = new Date().toISOString().split('T')[0];
+    
     // Insertar en Supabase y reiniciar formulario
     const nuevoProducto = { codigo, nombre, descripcion, id_almacen, fecha_creacion };
     await insertarProducto(nuevoProducto);
@@ -260,8 +259,6 @@ document.addEventListener('click', function(e) {
     if (e.target.classList.contains('producto-btn')) {
         const productoData = JSON.parse(e.target.getAttribute('data-producto'));
         cargarDatosEnModal(productoData);
-        console.log(productoData);
-        
     }
 });
 
