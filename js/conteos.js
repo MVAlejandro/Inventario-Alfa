@@ -4,6 +4,42 @@ import { validarCamposInvalidos, validarSelect } from "../js/validaciones/valida
 import { validarText, validarCantidad } from "./validaciones/regex.js"
 import { cargarOpciones } from './funciones/cargar_select.js';
 
+// Función para cargar productos en el select del formulario
+async function cargarProductos(idAlmacen) {
+    const { data, error } = await supabase
+        .from('productos')
+        .select('id_producto, codigo')
+        .eq('id_almacen', idAlmacen);
+
+    const selectProducto = document.getElementById('producto_manual');
+    selectProducto.innerHTML = '<option value="0">Seleccione...</option>';
+
+    if (error) {
+        console.error("Error cargando productos:", error);
+        return;
+    }
+
+    data.forEach(prod => {
+        const option = document.createElement('option');
+        option.value = prod.id_producto;
+        option.textContent = prod.codigo;
+        selectProducto.appendChild(option);
+    });
+}
+
+// Detectar cambio en el select de almacen en formulario
+document.getElementById('almacen_manual').addEventListener('change', function() {
+    const selectProducto = document.getElementById('producto_manual');
+    const idAlmacen = this.value;
+    if (idAlmacen !== "0") {
+        selectProducto.disabled = false;
+        cargarProductos(idAlmacen);
+    } else {
+        selectProducto.disabled = true;
+        document.getElementById('producto_manual').innerHTML = '';
+    }
+});
+
 // Función para calcular y asignar semana y año
 function getWeekAndYear(date = new Date()) {
     const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
@@ -75,10 +111,8 @@ async function insertarConteo(conteo) {
         console.error(error)
         alert('Error al guardar el conteo: ' + error.message)
     } else {
-        alert('Conteo agregado con éxito')
         generarTablaConteos() // actualizar listado
-        // Limpiar formulario
-        document.querySelector('form').reset()
+
     }
 }
 
@@ -207,62 +241,113 @@ function generarTablaConteos(conteos) {
     });
 }
 
-// Función para cargar productos en el select del formulario
-async function cargarProductos(idAlmacen) {
+// Agregar Movimiento Excel
+// Mapeo de nombre de almacén a ID
+const mapaAlmacenes = {
+    'NAVE 1': 1,
+    'NAVE 2': 2,
+    'NAVE 3': 3
+};
+
+// Función para buscar un producto por su código y almacén
+async function buscarProducto(codigo, id_almacen) {
     const { data, error } = await supabase
         .from('productos')
-        .select('id_producto, codigo')
-        .eq('id_almacen', idAlmacen);
+        .select('id_producto')
+        .eq('codigo', codigo)
+        .eq('id_almacen', id_almacen)
+        .maybeSingle();
 
-    const selectProducto = document.getElementById('producto');
-    selectProducto.innerHTML = '<option value="0">Seleccione...</option>';
-
-    if (error) {
-        console.error("Error cargando productos:", error);
-        return;
-    }
-
-    data.forEach(prod => {
-        const option = document.createElement('option');
-        option.value = prod.id_producto;
-        option.textContent = prod.codigo;
-        selectProducto.appendChild(option);
-    });
+    return data ? data.id_producto : null;
 }
 
-// Detectar cambio en el select de almacen en formulario
-document.getElementById('almacen').addEventListener('change', function() {
-    const selectProducto = document.getElementById('producto');
-    const idAlmacen = this.value;
-    if (idAlmacen !== "0") {
-        selectProducto.disabled = false;
-        cargarProductos(idAlmacen);
-    } else {
-        selectProducto.disabled = true;
-        document.getElementById('producto').innerHTML = '<option value="0">Seleccione...</option>';
+// Evento al dar click al botón Agregar Movimiento Excel
+document.getElementById('btn_add_excel').addEventListener('click', async function(event) {
+    event.preventDefault();
+    const formulario = document.getElementById('form_excel');
+    // Obtener valores de inputs
+    const texto_datos = document.getElementById('datos_excel').value
+
+    // Referencias para validación
+    const texto_datosIn = document.getElementById('datos_excel')
+    const error_texto_datos = document.getElementById('error-datos_excel')
+
+    // Validaciones
+    validarText(texto_datosIn, error_texto_datos)
+
+    if (!texto_datos) {
+        alert('Por favor, complete todos los campos para agregar la entrada.')
+        return
     }
+
+    const campos = document.querySelectorAll('input')
+    if (!validarCamposInvalidos(campos)) {
+        alert('Corrige los errores antes de guardar.')
+        return
+    }
+
+    // Divide filas y columnas
+    const filas = texto_datos.split('\n');
+    let conteosInsertados = 0;
+
+    for (let fila of filas) {
+        const columnas = fila.split('\t');
+        if (columnas.length < 4) continue;
+
+        const codigo = columnas[0].trim();
+        const nombreAlmacen = columnas[1].trim().toUpperCase();
+        const stock_real = parseInt(columnas[2].trim());
+        const observaciones = columnas[3].trim();
+
+        // Asignar valores en base a los mapas
+        const id_almacen = mapaAlmacenes[nombreAlmacen];
+
+        const id_producto = await buscarProducto(codigo, id_almacen);
+
+        // Insertar en Supabase
+        const nuevoConteo = {
+            id_producto,
+            stock_real,
+            observaciones
+        };
+
+        await insertarConteo(nuevoConteo);
+        conteosInsertados++;
+    }
+
+    alert(`Se agregaron ${conteosInsertados} conteos.`);
+    // Reiniciar formulario y eliminar validaciones visuales
+    formulario.reset();
+    formulario.querySelectorAll('.is-valid, .is-invalid').forEach(el => {
+        el.classList.remove('is-valid', 'is-invalid');
+    });
+
+    // Recargar tabla con datos actualizados
+    const conteosActualizados = await obtenerConteosCompletos();
+    generarTablaConteos(conteosActualizados);
 });
 
 // Evento al dar click al botón Agregar conteo
-document.getElementById('btn_add').addEventListener('click', async function(event) {
+document.getElementById('btn_add_manual').addEventListener('click', async function(event) {
     event.preventDefault()
+    const formulario = document.getElementById('form_manual');
 
     // Obtener valores de inputs
-    const almacen = document.getElementById('almacen').value
-    const id_producto = document.getElementById('producto').value
-    const stock_real = document.getElementById('cantidad').value
-    const observaciones = document.getElementById('observaciones').value
+    const almacen = document.getElementById('almacen_manual').value
+    const id_producto = document.getElementById('producto_manual').value
+    const stock_real = document.getElementById('cantidad_manual').value
+    const observaciones = document.getElementById('observaciones_manual').value
 
     // Referencias para validación
-    const almacenIn = document.getElementById('almacen')
-    const id_productoIn = document.getElementById('producto')
-    const stock_realIn = document.getElementById('cantidad')
-    const observacionesIn = document.getElementById('observaciones')
+    const almacenIn = document.getElementById('almacen_manual')
+    const id_productoIn = document.getElementById('producto_manual')
+    const stock_realIn = document.getElementById('cantidad_manual')
+    const observacionesIn = document.getElementById('observaciones_manual')
 
-    const error_almacen = document.getElementById('error-almacen')
-    const error_producto = document.getElementById('error-producto')
-    const error_stock_real = document.getElementById('error-cantidad')
-    const error_observaciones = document.getElementById('error-observaciones')
+    const error_almacen = document.getElementById('error-almacen_manual')
+    const error_producto = document.getElementById('error-producto_manual')
+    const error_stock_real = document.getElementById('error-cantidad_manual')
+    const error_observaciones = document.getElementById('error-observaciones_manual')
 
     // Validaciones
     validarSelect(almacenIn, error_almacen)
@@ -286,6 +371,12 @@ document.getElementById('btn_add').addEventListener('click', async function(even
     // Insertar en Supabase
     const nuevoConteo = { id_producto, stock_real, observaciones, fecha_conteo }
     await insertarConteo(nuevoConteo)
+    alert('Movimiento agregado con éxito');
+    formulario.reset();
+    // Eliminar validaciones visuales
+    formulario.querySelectorAll('.is-valid, .is-invalid').forEach(el => {
+        el.classList.remove('is-valid', 'is-invalid');
+    });
 
     // Recarga la tabla con los datos actualizados
     const conteosActualizados = await obtenerConteosCompletos();
@@ -294,7 +385,7 @@ document.getElementById('btn_add').addEventListener('click', async function(even
 
 // Cargar los almacenes, productos y registros al iniciar la página
 document.addEventListener('DOMContentLoaded', async () => {
-    cargarOpciones('almacen', 'almacenes', 'id_almacen', 'nombre')
+    cargarOpciones('almacen_manual', 'almacenes', 'id_almacen', 'nombre')
     generarTablaConteos()
 
     const conteosProcesados = await obtenerConteosCompletos();
