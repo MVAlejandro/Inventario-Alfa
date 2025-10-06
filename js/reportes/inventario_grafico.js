@@ -9,8 +9,13 @@ export async function generarEstadisticas() {
     const tipoVisualizacion = document.getElementById('tipo_visualizacion').value;
 
     // Obtener todos los movimientos y conteos que hay
-    let queryConteos = supabase.from('conteos').select('semana_conteo, anio_conteo, stock_real, id_producto');
-    let queryMovs = supabase.from('movimientos').select('tipo_movimiento, cantidad, semana, anio, id_producto');
+    let queryConteos = supabase
+    .from('conteos')
+    .select('semana_conteo, anio_conteo, stock_real, id_producto');
+
+    let queryMovs = supabase
+    .from('movimientos')
+    .select('tipo_movimiento, nombre_movimiento, cantidad, semana, anio, id_producto');
 
     if (anioSeleccionado) {
         queryConteos = queryConteos.eq('anio_conteo', anioSeleccionado);
@@ -65,10 +70,7 @@ export async function generarEstadisticas() {
                 case 'Entrada': 
                     movimientosPorSemana[key] += val;
                     break;
-                case 'Salida por factura':
-                case 'Traspaso a mesas':
-                case 'Desarme':
-                case 'Traspaso a Comep':
+                case 'Salida':
                     movimientosPorSemana[key] -= val;
                     break;
             }
@@ -142,10 +144,7 @@ export async function generarEstadisticas() {
                 case 'Entrada': 
                     movimientosPorMes[key] += val;
                     break;
-                case 'Salida por factura':
-                case 'Traspaso a mesas':
-                case 'Desarme':
-                case 'Traspaso a Comep':
+                case 'Salida':
                     movimientosPorMes[key] -= val;
                     break;
             }
@@ -197,7 +196,8 @@ export async function generarEstadisticas() {
     // Si no hay datos, mostrar mensaje
     if (labels.length === 0) {
         const container = document.querySelector('#estadistica-container .canvas-container');
-        container.innerHTML = '<div class="alert alert-info">No hay datos para mostrar con los filtros seleccionados</div>';
+        container.innerHTML = 
+        '<div class="alert alert-info">No hay datos para mostrar con los filtros seleccionados</div>';
         return;
     }
 
@@ -226,7 +226,7 @@ export async function generarEstadisticas() {
             scales: {
                 y: {
                     beginAtZero: true,
-                    max: 100,
+                    max: 120,
                     title: { display: true, text: 'Confiabilidad (%)' }
                 },
                 x: {

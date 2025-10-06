@@ -29,7 +29,7 @@ export async function generarInventarioGral() {
         // Obtener todos los movimientos
         let queryMovs = supabase
             .from('movimientos')
-            .select('tipo_movimiento, cantidad, semana, anio, id_producto');
+            .select('tipo_movimiento, nombre_movimiento, cantidad, semana, anio, id_producto');
 
         const { data: movimientos, error: errorMov } = await queryMovs;
         if (errorMov) throw errorMov;
@@ -70,28 +70,24 @@ export async function generarInventarioGral() {
         });
 
         // Calcular sumatorias por tipo de movimiento
-        const entradas = movimientosAcumulados
-            .filter(m => m.tipo_movimiento === 'Entrada')
+        const entradaAjuste = movimientosAcumulados
+            .filter(m => m.nombre_movimiento === 'Entrada por ajuste')
             .reduce((sum, m) => sum + parseInt(m.cantidad), 0);
 
-        const salidasFactura = movimientosAcumulados
-            .filter(m => m.tipo_movimiento === 'Salida por factura')
+        const entradaCancelacion = movimientosAcumulados
+            .filter(m => m.nombre_movimiento === 'Entrada por cancelacion')
             .reduce((sum, m) => sum + parseInt(m.cantidad), 0);
 
-        const trasladosMesas = movimientosAcumulados
-            .filter(m => m.tipo_movimiento === 'Traspaso a mesas')
+        const salidaNota = movimientosAcumulados
+            .filter(m => m.nombre_movimiento === 'Salida por nota de venta')
             .reduce((sum, m) => sum + parseInt(m.cantidad), 0);
 
-        const desarme = movimientosAcumulados
-            .filter(m => m.tipo_movimiento === 'Desarme')
-            .reduce((sum, m) => sum + parseInt(m.cantidad), 0);
-
-        const trasladosComep = movimientosAcumulados
-            .filter(m => m.tipo_movimiento === 'Traspaso a Comep')
+        const salidaAjuste = movimientosAcumulados
+            .filter(m => m.nombre_movimiento === 'Salida por ajuste')
             .reduce((sum, m) => sum + parseInt(m.cantidad), 0);
 
         // Total en sistema acumulado
-        const totalSistema = entradas - (salidasFactura + trasladosMesas + desarme + trasladosComep);
+        const totalSistema = (entradaAjuste + entradaCancelacion) - (salidaNota + salidaAjuste);
 
         // Total contado solo de la semana seleccionada
         const totalContado = conteosFiltrados.reduce((sum, c) => sum + parseInt(c.stock_real), 0);
@@ -104,11 +100,10 @@ export async function generarInventarioGral() {
 
         // Crear el objeto de resumen
         const resumen = {
-            entradas,
-            salidasFactura,
-            trasladosMesas,
-            desarme,
-            trasladosComep,
+            entradaAjuste,
+            entradaCancelacion,
+            salidaNota,
+            salidaAjuste,
             totalSistema,
             totalContado,
             diferencia,
@@ -157,24 +152,20 @@ function generarTablaInventarioGral(resumen) {
     // Generar la tabla con el resumen por tipo de movimiento
     tbody.innerHTML = 
         `<tr>
-            <td class="fw-bold">ENTRADAS</td>
-            <td>${resumen.entradas}</td>
+            <td class="fw-bold">ENTRADAS POR AJUSTE</td>
+            <td>${resumen.entradaAjuste}</td>
         </tr>
         <tr>
-            <td class="fw-bold">SALIDAS POR FACTURA</td>
-            <td>${resumen.salidasFactura}</td>
+            <td class="fw-bold">ENTRADAS POR CANCELACIÓN</td>
+            <td>${resumen.entradaCancelacion}</td>
         </tr>
         <tr>
-            <td class="fw-bold">TRASPASOS A MESAS</td>
-            <td>${resumen.trasladosMesas}</td>
+            <td class="fw-bold">SALIDAS POR NOTA DE VENTA</td>
+            <td>${resumen.salidaNota}</td>
         </tr>
         <tr>
-            <td class="fw-bold">DESARME</td>
-            <td>${resumen.desarme}</td>
-        </tr>
-        <tr>
-            <td class="fw-bold">TRASPASO A COMEP</td>
-            <td>${resumen.trasladosComep}</td>
+            <td class="fw-bold">SALIDAS POR AJUSTE</td>
+            <td>${resumen.salidaAjuste}</td>
         </tr>
         <tr class="table-active">
             <td class="fw-bold">TOTAL EN SISTEMA</td>
