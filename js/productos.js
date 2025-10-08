@@ -44,7 +44,6 @@ async function insertarProducto(producto) {
         console.error(error)
         alert('Error al guardar el producto: ' + error.message)
     } else {
-        alert('Producto agregado con éxito')
         generarTablaProductos() // actualizar listado
     }
 }
@@ -119,65 +118,73 @@ function generarTablaProductos(productos) {
     });
 }
 
-// Evento al dar click al botón Agregar Producto Manual
+// Agregar Movimiento Excel
+// Mapeo de nombre de almacén a ID
+const mapaAlmacenes = {
+    'NAVE 1': 1,
+    'NAVE 2': 2,
+    'NAVE 3': 3
+};
+
+// Evento al dar click al botón Agregar Producto Excel
 document.getElementById('btn_add_excel').addEventListener('click', async function(event) {
     event.preventDefault()
     const formulario = document.getElementById('form_excel');
 
     // Obtener valores de inputs
-    const id_almacen = document.getElementById('almacen_excel').value
     const texto_datos = document.getElementById('datos_excel').value
 
     // Referencias para validación
-    const id_almacenIn = document.getElementById('almacen_excel')
     const texto_datosIn = document.getElementById('datos_excel')
-
-    const error_almacen = document.getElementById('error-almacen_excel')
     const error_texto_datos = document.getElementById('error-datos_excel')
 
     // Validaciones
-    validarSelect(id_almacenIn, error_almacen)
     validarText(texto_datosIn, error_texto_datos)
 
-    if (!id_almacen || !texto_datos) {
+    if (!texto_datos) {
         alert('Por favor, complete todos los campos para agregar la entrada.')
         return
     }
 
-    const campos = document.querySelectorAll('input, select')
+    const campos = document.querySelectorAll('input')
     if (!validarCamposInvalidos(campos)) {
         alert('Corrige los errores antes de guardar.')
         return
     }
 
-    // Divide y filtra filas no vacías
-    const filas = texto_datos
-        .split('\n')
-        .map(fila => fila.trim())
-        .filter(fila => fila !== '');
+    // Divide filas y columnas
+    const filas = texto_datos.split('\n');
+    let productosInsertados = 0;
 
-    // Validar que solo haya una fila (una línea)
-    if (filas.length !== 1) {
-        alert('Solo se puede agregar un producto a la vez.');
-        return;
+    for (let fila of filas) {
+        const columnas = fila.split('\t');
+        if (columnas.length < 4) continue;
+
+        const codigo = columnas[0].trim();
+        const nombre = columnas[1].trim();
+        const nombreAlmacen = columnas[2].trim().toUpperCase();
+        const descripcion = columnas[3].trim();
+        let fecha_creacion = new Date().toISOString().split('T')[0];
+
+        // Asignar valores en base a los mapas
+        const id_almacen = mapaAlmacenes[nombreAlmacen];
+
+        // Insertar en Supabase
+        const nuevoProducto = {
+            codigo,
+            nombre,
+            id_almacen,
+            descripcion,
+            fecha_creacion
+        };
+
+        await insertarProducto(nuevoProducto);
+        productosInsertados++;
     }
 
-    const columnas = filas[0].split('\t');
-    if (columnas.length < 3) {
-        alert('El formato del producto es incorrecto. Asegúrate de seguir el formato: Código, Nombre, Descripción.');
-        return;
-    }
-
-    const codigo = columnas[0].trim();
-    const nombre = columnas[1].trim();
-    const descripcion = columnas[2].trim();
-    let fecha_creacion = new Date().toISOString().split('T')[0];
-    
-    // Insertar en Supabase y reiniciar formulario
-    const nuevoProducto = { codigo, nombre, descripcion, id_almacen, fecha_creacion };
-    await insertarProducto(nuevoProducto);
+    alert(`Se agregaron ${productosInsertados} productos.`);
+    // Reiniciar formulario y eliminar validaciones visuales
     formulario.reset();
-    // Eliminar validaciones visuales
     formulario.querySelectorAll('.is-valid, .is-invalid').forEach(el => {
         el.classList.remove('is-valid', 'is-invalid');
     });
@@ -231,6 +238,7 @@ document.getElementById('btn_add_manual').addEventListener('click', async functi
     // Insertar en Supabase y reiniciar formulario
     const nuevoProducto = { codigo, nombre, id_almacen, descripcion, fecha_creacion }
     await insertarProducto(nuevoProducto)
+    alert('Producto agregado con éxito')
     formulario.reset();
     // Eliminar validaciones visuales
     formulario.querySelectorAll('.is-valid, .is-invalid').forEach(el => {
