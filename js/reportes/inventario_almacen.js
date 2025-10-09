@@ -28,13 +28,13 @@ export async function generarInventarioInd() {
     const almacenFiltro = document.getElementById('almacenI').value;
 
     // Verificar si los filtros están vacíos
-    if (!semanaSeleccionada && !anioSeleccionado) {
+    if (!semanaSeleccionada || !anioSeleccionado) {
         generarTablaInventarioInd([]);
         return;
     }
 
     try {
-        // Construir query de productos - condicional según filtro de almacén
+        // Construir query de productos
         let queryProductos = supabase
             .from('productos')
             .select(`
@@ -43,8 +43,6 @@ export async function generarInventarioInd() {
                 id_almacen,
                 almacenes(nombre),
                 conteos (
-                    id_conteo,
-                    fecha_conteo,
                     semana_conteo,
                     anio_conteo,
                     stock_real
@@ -59,74 +57,32 @@ export async function generarInventarioInd() {
         const { data: productos, error: errorProd } = await queryProductos;
         if (errorProd) throw errorProd;
 
-        // Filtrar productos que tengan conteos en la semana seleccionada
-        const productosFiltrados = productos.filter(producto => {
-            // Filtrar conteos por semana
-            const conteosFiltrados = producto.conteos.filter(conteo => {
-                return conteo.semana_conteo === semanaSeleccionada &&
-                    conteo.anio_conteo === anioSeleccionado;
-            });
-
-            // Reemplazar conteos originales por los filtrados
-            producto.conteos = conteosFiltrados;
-
-            // Mantener solo productos con al menos un conteo válido
-            return conteosFiltrados.length > 0;
-        });
-
-        if (productosFiltrados.length === 0) {
-            generarTablaInventarioInd([]);
-            return;
-        }
-
-        // Obtener movimientos para los productos
-        const idsProductos = productosFiltrados.map(p => p.id_producto);
-
-        // Obtener todos los movimientos para estos productos, sin filtro para cálculo correcto
-        const { data: movimientos, error: errorMov } = await supabase
-            .from('movimientos')
-            .select('id_producto, tipo_movimiento, cantidad, fecha')
-            .in('id_producto', idsProductos);
-
-        if (errorMov) throw errorMov;
-
-        // Calcular stock histórico para cada conteo
         const inventario = [];
 
-        productosFiltrados.forEach(producto => {
-            producto.conteos.forEach(conteo => {
-                const fechaConteo = new Date(conteo.fecha_conteo);
+        productos.forEach(producto => {
+            // Filtrar conteos hasta la semana/año seleccionados
+            const conteo = producto.conteos.find(c => 
+                c.anio_conteo === anioSeleccionado &&
+                c.semana_conteo === semanaSeleccionada
+            );
 
-                // Filtrar movimientos hasta la fecha del conteo
-                const movimientosHastaConteo = movimientos.filter(m => {
-                    const fechaMovimiento = new Date(m.fecha);
-                    return m.id_producto === producto.id_producto && fechaMovimiento <= fechaConteo;
-                });
-
-                const stockHistorico = movimientosHastaConteo.reduce((acc, m) => {
-                    return acc + (m.tipo_movimiento === 'Entrada' ? +m.cantidad : -m.cantidad);
-                }, 0);
-
+            if (conteo) {
                 inventario.push({
                     id_producto: producto.id_producto,
                     codigo: producto.codigo,
                     almacen: producto.id_almacen,
                     almacen_nombre: producto.almacenes?.nombre,
-                    fecha_conteo: conteo.fecha_conteo,
                     semana_conteo: conteo.semana_conteo,
                     anio_conteo: conteo.anio_conteo,
-                    stock_real: conteo.stock_real,
-                    stock_sistema_hasta_conteo: stockHistorico,
-                    diferencia: conteo.stock_real - stockHistorico 
+                    stock_real: conteo.stock_real
                 });
-            });
+            }
         });
 
-        // Llamar a la función que genera la tabla con el inventario calculado
         generarTablaInventarioInd(inventario);
 
     } catch (error) {
-        console.error('Error cargando productos y conteos:', error);
+        console.error('Error generando inventario contado:', error);
         generarTablaInventarioInd([]);
     }
 }
@@ -141,42 +97,18 @@ function generarTablaInventarioInd(productos) {
     }
 
     // Calcular totales
-    const totalStockSistema = productos.reduce((sum, p) => sum + p.stock_sistema_hasta_conteo, 0);
     const totalStockReal = productos.reduce((sum, p) => sum + p.stock_real, 0);
-    const totalDiferencia = productos.reduce((sum, p) => sum + p.diferencia, 0);
-
-    // Determinar clase CSS para el total de diferencia
-    let claseTotalDiferencia = '';
-    if (totalDiferencia > 0) {
-        claseTotalDiferencia = 'text-success'; // Verde para positivo
-    } else if (totalDiferencia < 0) {
-        claseTotalDiferencia = 'text-danger';  // Rojo para negativo
-    } else {
-        claseTotalDiferencia = 'text-muted';   // Gris para cero
-    }
 
     // Generar filas de productos
     productos.forEach((p) => {
         const idProductos = p.id_producto;
-        // Determinar clase CSS basada en la diferencia
-        let claseDiferencia = '';
-        
-        if (p.diferencia > 0) {
-            claseDiferencia = 'text-success'; // Verde para positivo
-        } else if (p.diferencia < 0) {
-            claseDiferencia = 'text-danger';  // Rojo para negativo
-        } else {
-            claseDiferencia = 'text-muted';   // Gris para cero
-        }
 
         tbody.innerHTML += 
         `<tr data-id-tarea="${idProductos}">
             <th scope="row">${p.anio_conteo} / ${p.semana_conteo}</th>
             <td>${p.codigo}</td>
             <td>${p.almacen_nombre}</td>
-            <td>${p.stock_sistema_hasta_conteo}</td>
             <td>${p.stock_real}</td>
-            <td class="${claseDiferencia} fw-bold">${p.diferencia}</td>
         </tr>`;
     });
 
@@ -184,9 +116,7 @@ function generarTablaInventarioInd(productos) {
     tbody.innerHTML += 
     `<tr class="table-active fw-bold">
         <td colspan="3">TOTALES</td>
-        <td>${totalStockSistema}</td>
         <td>${totalStockReal}</td>
-        <td class="${claseTotalDiferencia}">${totalDiferencia}</td>
     </tr>`;
 }
 

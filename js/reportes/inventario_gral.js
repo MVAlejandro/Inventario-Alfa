@@ -5,7 +5,6 @@ export async function generarInventarioGral() {
     // Tomar valores de los selects
     const semanaSeleccionada = parseInt(document.getElementById('filtro_semanaG').value);
     const anioSeleccionado = parseInt(document.getElementById('filtro_anioG').value);
-    const filtroAlmacen = document.getElementById('almacenG').value;
 
     // Verificar si los filtros están vacíos
     if (!semanaSeleccionada && !anioSeleccionado) {
@@ -16,78 +15,57 @@ export async function generarInventarioGral() {
     try {
         // Obtener productos del almacén seleccionado (si hay filtro)
         let productosAlmacen = [];
-        if (filtroAlmacen && filtroAlmacen !== "0") {
-            const { data: productos, error: errorProd } = await supabase
-                .from('productos')
-                .select('id_producto')
-                .eq('id_almacen', parseInt(filtroAlmacen));
+        const { data: productos, error: errorProd } = await supabase
+            .from('productos')
+            .select('id_producto')
             
             if (errorProd) throw errorProd;
             productosAlmacen = productos.map(p => p.id_producto);
-        }
 
         // Obtener todos los movimientos
-        let queryMovs = supabase
+        const { data: movimientos, error: errorMov } = await supabase
             .from('movimientos')
-            .select('tipo_movimiento, nombre_movimiento, cantidad, semana, anio, id_producto');
+            .select('tipo_movimiento, cantidad, semana, anio');
 
-        const { data: movimientos, error: errorMov } = await queryMovs;
         if (errorMov) throw errorMov;
 
         // Obtener todos los conteos
-        let queryConteos = supabase
+        const { data: conteos, error: errorConteos } = await supabase
             .from('conteos')
             .select('stock_real, semana_conteo, anio_conteo, id_producto');
 
-        const { data: conteos, error: errorConteos } = await queryConteos;
         if (errorConteos) throw errorConteos;
 
-        // Filtrar movimientos acumulados hasta la semana seleccionada y por almacén
-        const movimientosAcumulados = movimientos.filter(m => {
+        // Filtrar movimientos por semana, año y almacén
+        const movimientosFiltrados = movimientos.filter(m => {
             const semanaMov = parseInt(m.semana);
             const anioMov = parseInt(m.anio);
-            
-            // Filtro por fecha
-            const cumpleFecha = anioMov < anioSeleccionado || 
-                              (anioMov === anioSeleccionado && semanaMov <= semanaSeleccionada);
-            
-            // Filtro por almacén (si aplica)
-            const cumpleAlmacen = productosAlmacen.length === 0 || 
-                                productosAlmacen.includes(m.id_producto);
-            
-            return cumpleFecha && cumpleAlmacen;
+
+            const cumpleFecha = anioMov === anioSeleccionado && semanaMov === semanaSeleccionada;
+
+            return cumpleFecha;
         });
 
-        // Filtrar conteos por semana y almacén
+        // Filtrar conteos por semana, año y almacén
         const conteosFiltrados = conteos.filter(c => {
-            const cumpleSemana = c.anio_conteo === anioSeleccionado && 
-                               c.semana_conteo === semanaSeleccionada;
-            
-            const cumpleAlmacen = productosAlmacen.length === 0 || 
-                                productosAlmacen.includes(c.id_producto);
-            
-            return cumpleSemana && cumpleAlmacen;
+            const cumpleSemana = c.anio_conteo === anioSeleccionado && c.semana_conteo === semanaSeleccionada;
+            return cumpleSemana;
         });
 
-        // Calcular sumatorias por tipo de movimiento
-        const entradaAjuste = movimientosAcumulados
-            .filter(m => m.nombre_movimiento === 'Entrada por ajuste')
-            .reduce((sum, m) => sum + parseInt(m.cantidad), 0);
+        // Obtener la cantidad de cada tipo de movimiento (solo un registro por tipo)
+        const getCantidad = tipo => {
+            const mov = movimientosFiltrados.find(m => m.tipo_movimiento === tipo);
+            return mov ? parseInt(mov.cantidad) : 0;
+        };
 
-        const entradaCancelacion = movimientosAcumulados
-            .filter(m => m.nombre_movimiento === 'Entrada por cancelacion')
-            .reduce((sum, m) => sum + parseInt(m.cantidad), 0);
-
-        const salidaNota = movimientosAcumulados
-            .filter(m => m.nombre_movimiento === 'Salida por nota de venta')
-            .reduce((sum, m) => sum + parseInt(m.cantidad), 0);
-
-        const salidaAjuste = movimientosAcumulados
-            .filter(m => m.nombre_movimiento === 'Salida por ajuste')
-            .reduce((sum, m) => sum + parseInt(m.cantidad), 0);
+        const entradas = getCantidad('ENTRADA');
+        const salidasFactura = getCantidad('SALIDA POR FACTURA');
+        const trasladosMesas = getCantidad('TRASPASO A MESAS');
+        const desarme = getCantidad('DESARME');
+        const trasladosComep = getCantidad('TRASPASO A COMEP');
 
         // Total en sistema acumulado
-        const totalSistema = (entradaAjuste + entradaCancelacion) - (salidaNota + salidaAjuste);
+        const totalSistema = (entradas + trasladosMesas) - (salidasFactura + desarme + trasladosComep);
 
         // Total contado solo de la semana seleccionada
         const totalContado = conteosFiltrados.reduce((sum, c) => sum + parseInt(c.stock_real), 0);
@@ -100,10 +78,11 @@ export async function generarInventarioGral() {
 
         // Crear el objeto de resumen
         const resumen = {
-            entradaAjuste,
-            entradaCancelacion,
-            salidaNota,
-            salidaAjuste,
+            entradas,
+            salidasFactura,
+            trasladosMesas,
+            desarme,
+            trasladosComep,
             totalSistema,
             totalContado,
             diferencia,
@@ -152,20 +131,24 @@ function generarTablaInventarioGral(resumen) {
     // Generar la tabla con el resumen por tipo de movimiento
     tbody.innerHTML = 
         `<tr>
-            <td class="fw-bold">ENTRADAS POR AJUSTE</td>
-            <td>${resumen.entradaAjuste}</td>
+            <td class="fw-bold">ENTRADAS</td>
+            <td>${resumen.entradas}</td>
         </tr>
         <tr>
-            <td class="fw-bold">ENTRADAS POR CANCELACIÓN</td>
-            <td>${resumen.entradaCancelacion}</td>
+            <td class="fw-bold">SALIDAS POR FACTURA</td>
+            <td>${resumen.salidasFactura}</td>
         </tr>
         <tr>
-            <td class="fw-bold">SALIDAS POR NOTA DE VENTA</td>
-            <td>${resumen.salidaNota}</td>
+            <td class="fw-bold">TRASPASOS A MESAS</td>
+            <td>${resumen.trasladosMesas}</td>
         </tr>
         <tr>
-            <td class="fw-bold">SALIDAS POR AJUSTE</td>
-            <td>${resumen.salidaAjuste}</td>
+            <td class="fw-bold">DESARME</td>
+            <td>${resumen.desarme}</td>
+        </tr>
+        <tr>
+            <td class="fw-bold">TRASPASO A COMEP</td>
+            <td>${resumen.trasladosComep}</td>
         </tr>
         <tr class="table-active">
             <td class="fw-bold">TOTAL EN SISTEMA</td>
@@ -183,4 +166,59 @@ function generarTablaInventarioGral(resumen) {
             <td class="fw-bold">CONFIABILIDAD</td>
             <td class="fw-bold ${claseConfiabilidad}">${resumen.confiabilidad.toFixed(2)}%</td>
         </tr>`;
+}
+
+export async function cargarFiltrosG(añoSel, semanaSel) {
+    const { data: conteos, error } = await supabase
+        .from('conteos')
+        .select('semana_conteo, anio_conteo');
+
+    if (error) {
+        console.error('Error cargando semanas/años:', error);
+        return;
+    }
+
+    // Agrupar semanas por año
+    const semanasPorAnio = {};
+    conteos.forEach(c => {
+        if (!semanasPorAnio[c.anio_conteo]) {
+            semanasPorAnio[c.anio_conteo] = new Set();
+        }
+        semanasPorAnio[c.anio_conteo].add(c.semana_conteo);
+    });
+
+    const selectAnio = document.getElementById(añoSel);
+    const selectSemana = document.getElementById(semanaSel);
+
+    // Llenar select de años
+    selectAnio.innerHTML = '<option value="0">Seleccione...</option>';
+    Object.keys(semanasPorAnio)
+        .sort((a, b) => b - a) // orden descendente
+        .forEach(anio => {
+            const option = document.createElement('option');
+            option.value = anio;
+            option.textContent = anio;
+            selectAnio.appendChild(option);
+        });
+
+    // Escuchar cuando se selecciona un año
+    selectAnio.addEventListener('change', function () {
+        const anioSeleccionado = this.value;
+
+        if (anioSeleccionado !== "0") {
+            const semanas = Array.from(semanasPorAnio[anioSeleccionado]).sort((a, b) => a - b);
+            selectSemana.disabled = false;
+            selectSemana.innerHTML = '<option value="0">Seleccione...</option>';
+
+            semanas.forEach(semana => {
+                const option = document.createElement('option');
+                option.value = semana;
+                option.textContent = `Semana ${semana}`;
+                selectSemana.appendChild(option);
+            });
+        } else {
+            selectSemana.disabled = true;
+            selectSemana.innerHTML = '<option value="0">Seleccione...</option>';
+        }
+    });
 }

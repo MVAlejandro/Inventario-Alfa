@@ -5,17 +5,11 @@ import { cargarAlmacenes } from './inventario_almacen.js';
 export async function generarEstadisticas() {
     // Tomar valores de los selects
     const anioSeleccionado = parseInt(document.getElementById('filtro_anioE').value);
-    const filtroAlmacen = document.getElementById('almacenE').value;
     const tipoVisualizacion = document.getElementById('tipo_visualizacion').value;
 
     // Obtener todos los movimientos y conteos que hay
-    let queryConteos = supabase
-    .from('conteos')
-    .select('semana_conteo, anio_conteo, stock_real, id_producto');
-
-    let queryMovs = supabase
-    .from('movimientos')
-    .select('tipo_movimiento, nombre_movimiento, cantidad, semana, anio, id_producto');
+    let queryConteos = supabase.from('conteos').select('semana_conteo, anio_conteo, stock_real, id_producto');
+    let queryMovs = supabase.from('movimientos').select('tipo_movimiento, cantidad, semana, anio');
 
     if (anioSeleccionado) {
         queryConteos = queryConteos.eq('anio_conteo', anioSeleccionado);
@@ -27,13 +21,6 @@ export async function generarEstadisticas() {
 
     const { data: movimientos, error: errorMov } = await queryMovs;
     if (errorMov) throw errorMov;
-
-    // Si hay filtrado por almacén, limitar productos
-    let productosAlmacen = [];
-    if (filtroAlmacen && filtroAlmacen !== "0") {
-        const { data: productos } = await supabase.from('productos').select('id_producto').eq('id_almacen', filtroAlmacen);
-        productosAlmacen = productos.map(p => p.id_producto);
-    }
 
     let labels = [];
     let confiabilidadData = [];
@@ -56,8 +43,8 @@ export async function generarEstadisticas() {
         const semanasUnicas = new Set();
         
         movimientos.forEach(m => {
-            if (productosAlmacen.length && !productosAlmacen.includes(m.id_producto)) return;
-            
+            // Ya no filtramos por almacén, mostramos todo
+
             const key = `${m.anio}-${m.semana}`;
             semanasUnicas.add(key);
             
@@ -67,10 +54,13 @@ export async function generarEstadisticas() {
             
             let val = parseInt(m.cantidad);
             switch (m.tipo_movimiento) {
-                case 'Entrada': 
+                case 'ENTRADA': 
+                case 'TRASPASO A MESAS':
                     movimientosPorSemana[key] += val;
                     break;
-                case 'Salida':
+                case 'SALIDA POR FACTURA':
+                case 'DESARME':
+                case 'TRASPASO A COMEP':
                     movimientosPorSemana[key] -= val;
                     break;
             }
@@ -78,7 +68,7 @@ export async function generarEstadisticas() {
 
         // Ahora procesar conteos y calcular confiabilidad
         conteos.forEach(c => {
-            if (productosAlmacen.length && !productosAlmacen.includes(c.id_producto)) return;
+            // Sin filtro por almacén
             const key = `${c.anio_conteo}-${c.semana_conteo}`;
             if (!semanasMap[key]) semanasMap[key] = { totalContado: 0, totalSistema: 0 };
             semanasMap[key].totalContado += parseInt(c.stock_real);
@@ -108,11 +98,10 @@ export async function generarEstadisticas() {
             const valor = totalSistema ? (totalContado / totalSistema) * 100 : 0;
             confiabilidadData.push(parseFloat(valor.toFixed(2)));
         });
-
     } else if (tipoVisualizacion === 'meses') {
         // Agrupar por mes - usando aproximación basada en semanas
         const mesesMap = {};
-        
+
         // Función para aproximar mes basado en semana (1-4: mes 1, 5-8: mes 2, etc.)
         const obtenerMesDeSemana = (semana) => {
             return Math.ceil(semana / 4.33); // Aproximación: ~4.33 semanas por mes
@@ -121,7 +110,7 @@ export async function generarEstadisticas() {
         // Primero calcular movimientos acumulados por mes
         const movimientosPorMes = {};
         let stockSistemaAcumulado = 0;
-        
+
         // Ordenar movimientos por fecha (año y semana)
         movimientos.sort((a, b) => {
             if (a.anio !== b.anio) return a.anio - b.anio;
@@ -130,21 +119,22 @@ export async function generarEstadisticas() {
 
         // Calcular stock del sistema acumulado por mes
         movimientos.forEach(m => {
-            if (productosAlmacen.length && !productosAlmacen.includes(m.id_producto)) return;
-            
             const mes = obtenerMesDeSemana(m.semana);
             const key = `${m.anio}-${mes.toString().padStart(2, '0')}`;
-            
+
             if (!movimientosPorMes[key]) {
                 movimientosPorMes[key] = 0;
             }
-            
+
             let val = parseInt(m.cantidad);
             switch (m.tipo_movimiento) {
-                case 'Entrada': 
+                case 'ENTRADA': 
+                case 'TRASPASO A MESAS':
                     movimientosPorMes[key] += val;
                     break;
-                case 'Salida':
+                case 'SALIDA POR FACTURA':
+                case 'DESARME':
+                case 'TRASPASO A COMEP':
                     movimientosPorMes[key] -= val;
                     break;
             }
@@ -154,7 +144,7 @@ export async function generarEstadisticas() {
         const mesesOrdenados = Object.keys(movimientosPorMes).sort();
         let acumuladoSistema = 0;
         const sistemaPorMes = {};
-        
+
         mesesOrdenados.forEach(mesKey => {
             acumuladoSistema += movimientosPorMes[mesKey];
             sistemaPorMes[mesKey] = acumuladoSistema;
@@ -162,7 +152,7 @@ export async function generarEstadisticas() {
 
         // Procesar conteos por mes
         conteos.forEach(c => {
-            if (productosAlmacen.length && !productosAlmacen.includes(c.id_producto)) return;
+            // Ya no filtramos por almacén
             const mes = obtenerMesDeSemana(c.semana_conteo);
             const key = `${c.anio_conteo}-${mes.toString().padStart(2, '0')}`;
             if (!mesesMap[key]) mesesMap[key] = { totalContado: 0, totalSistema: 0 };
@@ -256,9 +246,7 @@ export async function cargarFiltrosE(añoSel, almacenSel) {
 
     // Obtener años únicos
     const añosUnicos = [...new Set(conteos.map(c => c.anio_conteo))];
-
     const selectAnio = document.getElementById(añoSel);
-    const selectAlmacen = document.getElementById(almacenSel);
 
     // Llenar select de años
     selectAnio.innerHTML = '<option value="0">Seleccione...</option>';
@@ -270,17 +258,4 @@ export async function cargarFiltrosE(añoSel, almacenSel) {
             option.textContent = anio;
             selectAnio.appendChild(option);
         });
-
-    // Escuchar cuando se selecciona un año
-    selectAnio.addEventListener('change', function () {
-        const anioSeleccionado = this.value;
-
-        if (anioSeleccionado !== "0") {
-            selectAlmacen.disabled = false;
-            cargarAlmacenes(almacenSel);
-        } else {
-            selectAlmacen.disabled = true;
-            selectAlmacen.innerHTML = '<option value="0">Todos</option>';
-        }
-    });
 }

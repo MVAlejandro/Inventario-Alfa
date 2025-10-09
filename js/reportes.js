@@ -1,7 +1,7 @@
 
 // IMPORTACIÓN DE FUNCIONES EXTERNAS
 import { cargarFiltros, generarInventarioInd } from './reportes/inventario_almacen.js'
-import { generarInventarioGral } from './reportes/inventario_gral.js'
+import { cargarFiltrosG, generarInventarioGral } from './reportes/inventario_gral.js'
 import { cargarFiltrosE, generarEstadisticas } from './reportes/inventario_grafico.js'
 
 // INVENTARIO POR ALMACEN
@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // INVENTARIO GENERAL
 document.addEventListener('DOMContentLoaded', () => {
-    cargarFiltros('filtro_anioG', 'filtro_semanaG', 'almacenG')
+    cargarFiltrosG('filtro_anioG', 'filtro_semanaG', 'almacenG')
 
     const btnGenerar = document.getElementById('btn_genG');
     btnGenerar.addEventListener('click', generarInventarioGral);

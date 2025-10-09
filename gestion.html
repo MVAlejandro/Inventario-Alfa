@@ -54,7 +54,7 @@
                                                 <div class="row mb-3">
                                                     <div class="movimiento col">
                                                         <label for="datos_excel" class="m-1">Datos del movimiento</label>
-                                                        <textarea id="datos_excel" class="form-control" rows="3" placeholder="Ingrese los datos desde Excel con formato:  'Código, Almacén, Tipo, Movimiento, Cantidad, Observaciones'"></textarea>
+                                                        <textarea id="datos_excel" class="form-control" rows="3" placeholder="Ingrese los datos desde Excel con formato:  'Movimiento, Cantidad, Observaciones'"></textarea>
                                                         <p class="error invalid-feedback" id="error-datos_excel" style="color: red;"></p>
                                                     </div>
                                                 </div>  
@@ -66,46 +66,25 @@
                                         <!-- Tab de llenado manual -->
                                         <div class="tab-pane fade" id="tab_form_manual" role="tabpanel">
                                             <form id="form_manual">
-                                                <div class="row mb-3">
+                                                <div class="row mb-2">
                                                     <div class="movimiento col-md-3">
-                                                        <label for="almacen_manual" class="m-1">Almacén</label>
-                                                        <select id="almacen_manual" class="form-select" aria-label="Default select example">
-                                                            <option value="0">Seleccione...</option>
-
-                                                        </select>
-                                                        <p class="error invalid-feedback" id="error-almacen_manual" style="color: red;"></p>
-                                                    </div>
-                                                    <div class="movimiento col-md-3">
-                                                        <label for="producto_manual" class="m-1">Producto</label>
-                                                        <select id="producto_manual" class="form-select" aria-label="Default select example" disabled>
-
-                                                        </select>
-                                                        <p class="error invalid-feedback" id="error-producto_manual" style="color: red;"></p>
-                                                    </div>
-                                                    <div class="movimiento col-md-2">
                                                         <label for="tipo_movimiento_manual" class="m-1">Tipo</label>
                                                         <select id="tipo_movimiento_manual" class="form-select" aria-label="Default select example">
                                                             <option value="0">Seleccione...</option>
-                                                            <option value="Entrada">Entrada</option>
-                                                            <option value="Salida">Salida</option>
+                                                            <option value="ENTRADA">Entrada</option>
+                                                            <option value="TRASPASO A MESAS">Traspaso a mesas</option>
+                                                            <option value="SALIDA POR FACTURA">Salida por factura</option>
+                                                            <option value="DESARME">Desarme</option>
+                                                            <option value="TRASPASO A COMEP">Traspaso a Comep</option>
                                                         </select>
                                                         <p class="error invalid-feedback" id="error-tipo_movimiento_manual" style="color: red;"></p>
                                                     </div>
-                                                    <div class="movimiento col-md-4">
-                                                        <label for="movimiento_manual" class="m-1">Movimiento</label>
-                                                        <select id="movimiento_manual" class="form-select" aria-label="Default select example" disabled>
-
-                                                        </select>
-                                                        <p class="error invalid-feedback" id="error-movimiento_manual" style="color: red;"></p>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
                                                     <div class="movimiento col-md-2">
                                                         <label for="cantidad_manual" class="m-1">Cantidad</label>
                                                         <input type="number" id="cantidad_manual" class="form-control no-arrows" placeholder="Cantidad">
                                                         <p class="error invalid-feedback" id="error-cantidad_manual" style="color: red;"></p>
                                                     </div>
-                                                    <div class="movimiento col-md-10">
+                                                    <div class="movimiento col-md-7">
                                                         <label for="observaciones_manual" class="m-1">Observaciones</label>
                                                         <input type="text" id="observaciones_manual" class="form-control" placeholder="Observaciones">
                                                         <p class="error invalid-feedback" id="error-observaciones_manual" style="color: red;"></p>
@@ -131,8 +110,6 @@
                         <select class="form-select" id="filtro_tipo">
                             <option value="0">Todos</option>
                             <option value="semana">Semana</option>
-                            <option value="codigo">Producto</option>
-                            <option value="almacen">Almacén</option>
                             <option value="nombre_movimiento">Movimiento</option>
                         </select>
                     </div>
@@ -157,8 +134,6 @@
                         <thead>
                             <tr>
                                 <th>Año / Semana</th>
-                                <th>Producto</th>
-                                <th>Almacén</th>
                                 <th>Movimiento</th>
                                 <th>Cantidad</th>
                                 <th>Observaciones</th>
@@ -200,16 +175,6 @@
                                 <div class="col-md-3 ms-auto">
                                     <label for="edit_fecha" class="form-label">Fecha</label>
                                     <input type="text" class="form-control" id="edit_fecha" disabled>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="edit_producto" class="form-label">Producto</label>
-                                    <input type="text" class="form-control" id="edit_producto" disabled>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="edit_almacen" class="form-label">Almacén</label>
-                                    <input type="text" class="form-control" id="edit_almacen" disabled>
                                 </div>
                             </div>
                             
