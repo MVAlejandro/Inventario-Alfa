@@ -2,60 +2,83 @@
 import supabase from '../supabase/supabase-client.js'
 
 export async function generarInventarioGral() {
-    // Tomar valores de los selects
     const semanaSeleccionada = parseInt(document.getElementById('filtro_semanaG').value);
     const anioSeleccionado = parseInt(document.getElementById('filtro_anioG').value);
 
-    // Verificar si los filtros están vacíos
     if (!semanaSeleccionada && !anioSeleccionado) {
         generarTablaInventarioGral([]);
         return;
     }
 
     try {
-        // Obtener productos del almacén seleccionado (si hay filtro)
+        // Obtener productos
         let productosAlmacen = [];
         const { data: productos, error: errorProd } = await supabase
             .from('productos')
-            .select('id_producto')
-            
-            if (errorProd) throw errorProd;
-            productosAlmacen = productos.map(p => p.id_producto);
+            .select('id_producto');
 
-        // Obtener todos los movimientos
+        if (errorProd) throw errorProd;
+
+        productosAlmacen = productos.map(p => p.id_producto);
+
+        // Obtener movimientos
         const { data: movimientos, error: errorMov } = await supabase
             .from('movimientos')
             .select('tipo_movimiento, cantidad, semana, anio');
 
         if (errorMov) throw errorMov;
 
-        // Obtener todos los conteos
+        // Obtener conteos
         const { data: conteos, error: errorConteos } = await supabase
             .from('conteos')
             .select('stock_real, semana_conteo, anio_conteo, id_producto');
 
         if (errorConteos) throw errorConteos;
 
-        // Filtrar movimientos por semana, año y almacén
-        const movimientosFiltrados = movimientos.filter(m => {
-            const semanaMov = parseInt(m.semana);
-            const anioMov = parseInt(m.anio);
+        // Ordenar movimientos cronológicamente
+        const movimientosOrdenados = movimientos
+            .map(m => ({
+                ...m,
+                semana: parseInt(m.semana),
+                anio: parseInt(m.anio),
+                cantidad: parseInt(m.cantidad)
+            }))
+            .sort((a, b) => {
+                if (a.anio === b.anio) return a.semana - b.semana;
+                return a.anio - b.anio;
+            });
 
-            const cumpleFecha = anioMov === anioSeleccionado && semanaMov === semanaSeleccionada;
+        // Inicializar totalSistema
+        let totalSistema = 0;
 
-            return cumpleFecha;
-        });
+        // Registrar los movimientos solo de la semana seleccionada para el resumen
+        const movimientosSemanaSeleccionada = [];
 
-        // Filtrar conteos por semana, año y almacén
-        const conteosFiltrados = conteos.filter(c => {
-            const cumpleSemana = c.anio_conteo === anioSeleccionado && c.semana_conteo === semanaSeleccionada;
-            return cumpleSemana;
-        });
+        for (const mov of movimientosOrdenados) {
+            const { tipo_movimiento, cantidad, semana, anio } = mov;
 
-        // Obtener la cantidad de cada tipo de movimiento (solo un registro por tipo)
+            // Saltar movimientos futuros
+            if (anio > anioSeleccionado || (anio === anioSeleccionado && semana > semanaSeleccionada)) {
+                break;
+            }
+
+            // Aplicar al totalSistema
+            if (['ENTRADA', 'TRASPASO A MESAS'].includes(tipo_movimiento)) {
+                totalSistema += cantidad;
+            } else if (['SALIDA POR FACTURA', 'DESARME', 'TRASPASO A COMEP'].includes(tipo_movimiento)) {
+                totalSistema -= cantidad;
+            }
+
+            // Si es la semana seleccionada, guardar para el resumen
+            if (anio === anioSeleccionado && semana === semanaSeleccionada) {
+                movimientosSemanaSeleccionada.push(mov);
+            }
+        }
+
+        // Calcular resumen por tipo para la semana seleccionada
         const getCantidad = tipo => {
-            const mov = movimientosFiltrados.find(m => m.tipo_movimiento === tipo);
-            return mov ? parseInt(mov.cantidad) : 0;
+            const filtered = movimientosSemanaSeleccionada.filter(m => m.tipo_movimiento === tipo);
+            return filtered.reduce((sum, m) => sum + m.cantidad, 0);
         };
 
         const entradas = getCantidad('ENTRADA');
@@ -64,19 +87,16 @@ export async function generarInventarioGral() {
         const desarme = getCantidad('DESARME');
         const trasladosComep = getCantidad('TRASPASO A COMEP');
 
-        // Total en sistema acumulado
-        const totalSistema = (entradas + trasladosMesas) - (salidasFactura + desarme + trasladosComep);
+        // Calcular totalContado (solo semana seleccionada)
+        const conteosFiltrados = conteos.filter(c =>
+            c.anio_conteo === anioSeleccionado && c.semana_conteo === semanaSeleccionada
+        );
 
-        // Total contado solo de la semana seleccionada
         const totalContado = conteosFiltrados.reduce((sum, c) => sum + parseInt(c.stock_real), 0);
 
-        // Diferencia
         const diferencia = totalContado - totalSistema;
-
-        // Calcular confiabilidad
         const confiabilidad = totalSistema > 0 ? (totalContado / totalSistema) * 100 : 0;
 
-        // Crear el objeto de resumen
         const resumen = {
             entradas,
             salidasFactura,
@@ -89,7 +109,6 @@ export async function generarInventarioGral() {
             confiabilidad
         };
 
-        // Generar tabla con el resumen
         generarTablaInventarioGral(resumen);
 
     } catch (error) {

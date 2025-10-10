@@ -223,6 +223,9 @@ function generarTablaConteos(conteos) {
         return;
     }
 
+    // Mostrar siempre las entradas ordenadas por id
+    conteos.sort((a, b) => a.id_conteo - b.id_conteo);
+
     conteos.forEach(conteo => {
         tbody.innerHTML += 
         `<tr>

@@ -175,6 +175,9 @@ function generarTablaMovimientos(movimientos) {
         return;
     }
 
+    // Mostrar siempre las entradas ordenadas por id
+    movimientos.sort((a, b) => a.id_movimiento - b.id_movimiento);
+
     movimientos.forEach(movimiento => {
         tbody.innerHTML += 
         `<tr>
