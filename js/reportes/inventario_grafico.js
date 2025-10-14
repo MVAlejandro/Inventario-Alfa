@@ -1,105 +1,30 @@
 
 import supabase from '../supabase/supabase-client.js'
+import { generarResumenInventarios } from './inventario_gral.js';
 
 export async function generarEstadisticas() {
-    // Tomar valores de los selects
-    const anioSeleccionado = parseInt(document.getElementById('filtro_anioE').value);
+    try {
+        // Obtener todos los resúmenes de inventarios
+        const resumenes = await generarResumenInventarios();
 
-    // Obtener todos los movimientos y conteos que hay
-    let queryConteos = supabase.from('conteos').select('semana_conteo, anio_conteo, stock_real, id_producto');
-    let queryMovs = supabase.from('movimientos').select('tipo_movimiento, cantidad, semana, anio');
-
-    if (anioSeleccionado) {
-        queryConteos = queryConteos.eq('anio_conteo', anioSeleccionado);
-        queryMovs = queryMovs.eq('anio', anioSeleccionado);
-    }
-
-    const { data: conteos, error: errorConteos } = await queryConteos;
-    if (errorConteos) throw errorConteos;
-
-    const { data: movimientos, error: errorMov } = await queryMovs;
-    if (errorMov) throw errorMov;
-
-    let labels = [];
-    let confiabilidadData = [];
-
-    // Agrupar por semana
-    const semanasMap = {};
-        
-    // Calcular el stock del sistema acumulado por semana
-    const movimientosPorSemana = {};
-        
-    // Ordenar movimientos por semana
-    movimientos.sort((a, b) => {
-        if (a.anio !== b.anio) return a.anio - b.anio;
-        return a.semana - b.semana;
-    });
-
-    // Calcular stock acumulado del sistema
-    const semanasUnicas = new Set();
-        
-    movimientos.forEach(m => {
-
-        const key = `${m.anio}-${m.semana}`;
-        semanasUnicas.add(key);
-            
-        if (!movimientosPorSemana[key]) {
-            movimientosPorSemana[key] = 0;
+        if (!resumenes.length) {
+            const container = document.querySelector('#estadistica-container .canvas-container');
+            container.innerHTML = '<div class="alert alert-info">No hay datos para mostrar con los filtros seleccionados</div>';
+            return;
         }
-                
-        let val = parseInt(m.cantidad);
-        switch (m.tipo_movimiento) {
-            case 'ENTRADA': 
-            case 'TRASPASO A MESAS':
-                movimientosPorSemana[key] += val;
-                break;
-            case 'SALIDA POR FACTURA':
-            case 'DESARME':
-            case 'TRASPASO A COMEP':
-                movimientosPorSemana[key] -= val;
-                break;
-        }
-    });
 
-    // Procesar conteos y calcular confiabilidad
-    conteos.forEach(c => {
-        const key = `${c.anio_conteo}-${c.semana_conteo}`;
-        if (!semanasMap[key]) semanasMap[key] = { totalContado: 0, totalSistema: 0 };
-        semanasMap[key].totalContado += parseInt(c.stock_real);
-    });
+        // Filtrar por año si se seleccionó alguno
+        const anioSeleccionado = parseInt(document.getElementById('filtro_anioE').value);
+        const datosFiltrados = anioSeleccionado
+            ? resumenes.filter(r => r.anio === anioSeleccionado)
+            : resumenes;
 
-    // Calcular stock del sistema acumulado para cada semana
-    const semanasOrdenadas = Array.from(semanasUnicas).sort();
-    let acumuladoSistema = 0;
-    const sistemaPorSemana = {};
-        
-    semanasOrdenadas.forEach(semanaKey => {
-        acumuladoSistema += movimientosPorSemana[semanaKey];
-        sistemaPorSemana[semanaKey] = acumuladoSistema;
-    });
+        // Ordenar por año y semana
+        datosFiltrados.sort((a, b) => a.anio !== b.anio ? a.anio - b.anio : a.semana - b.semana);
 
-    // Combinar conteos con sistema acumulado
-    Object.keys(semanasMap).forEach(key => {
-        if (sistemaPorSemana[key]) {
-            semanasMap[key].totalSistema = sistemaPorSemana[key];
-        }
-    });
-
-    // Preparar datos para gráfico por semanas
-    Object.keys(semanasMap).sort().forEach(k => {
-        labels.push(`Semana ${k.split('-')[1]}`);
-        const { totalContado, totalSistema } = semanasMap[k];
-        const valor = totalSistema ? (totalContado / totalSistema) * 100 : 0;
-        confiabilidadData.push(parseFloat(valor.toFixed(2)));
-    });
-
-    // Si no hay datos, mostrar mensaje
-    if (labels.length === 0) {
-        const container = document.querySelector('#estadistica-container .canvas-container');
-        container.innerHTML = 
-        '<div class="alert alert-info">No hay datos para mostrar con los filtros seleccionados</div>';
-        return;
-    }
+        // Preparar labels y datos para gráfico
+        const labels = datosFiltrados.map(r => `Semana ${r.semana} / ${r.anio}`);
+        const confiabilidadData = datosFiltrados.map(r => r.confiabilidad);
 
     // Dibujar chart
     const container = document.querySelector('#estadistica-container .canvas-container');
@@ -151,9 +76,12 @@ export async function generarEstadisticas() {
         },
         plugins: [ChartDataLabels]
     });
+    }catch (error) {
+        console.error('Error generando estadísticas:', error);
+    }
 }
 
-export async function cargarFiltrosE(añoSel, almacenSel) {
+export async function cargarFiltrosE(añoSel) {
     const { data: conteos, error } = await supabase
         .from('conteos')
         .select('anio_conteo');

@@ -249,7 +249,8 @@ function generarTablaConteos(conteos) {
 const mapaAlmacenes = {
     'NAVE 1': 1,
     'NAVE 2': 2,
-    'NAVE 3': 3
+    'NAVE 3': 3,
+    'PRODUCCION':4
 };
 
 // Función para buscar un producto por su código y almacén
@@ -264,7 +265,7 @@ async function buscarProducto(codigo, id_almacen) {
     return data ? data.id_producto : null;
 }
 
-// Evento al dar click al botón Agregar Movimiento Excel
+// Evento al dar click al botón Agregar Conteo Excel
 document.getElementById('btn_add_excel').addEventListener('click', async function(event) {
     event.preventDefault();
     const formulario = document.getElementById('form_excel');

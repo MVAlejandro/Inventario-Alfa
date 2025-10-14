@@ -8,22 +8,37 @@ import { cargarFiltrosE, generarEstadisticas } from './reportes/inventario_grafi
 document.addEventListener('DOMContentLoaded', () => {
     cargarFiltros('filtro_anioI', 'filtro_semanaI', 'almacenI')
 
-    const btnGenerar = document.getElementById('btn_genI');
-    btnGenerar.addEventListener('click', generarInventarioInd);
+    document.getElementById('btn_genI').addEventListener('click', function() {
+        generarInventarioInd()
+    });
+
+    document.getElementById('btn_printI').addEventListener('click', function() {
+        window.print();
+    });
 });
 
 // INVENTARIO GENERAL
 document.addEventListener('DOMContentLoaded', () => {
     cargarFiltrosG('filtro_anioG', 'filtro_semanaG', 'almacenG')
 
-    const btnGenerar = document.getElementById('btn_genG');
-    btnGenerar.addEventListener('click', generarInventarioGral);
+    document.getElementById('btn_genG').addEventListener('click', function() {
+        generarInventarioGral()
+    });
+
+    document.getElementById('btn_printG').addEventListener('click', function() {
+        window.print();
+    });
 });
 
 // GRÁFICO DE REPORTE
 document.addEventListener('DOMContentLoaded', () => {
     cargarFiltrosE('filtro_anioE', 'almacenE')
 
-    const btnGenerar = document.getElementById('btn_genE');
-    btnGenerar.addEventListener('click', generarEstadisticas);
+    document.getElementById('btn_genE').addEventListener('click', function() {
+        generarEstadisticas()
+    });
+
+    document.getElementById('btn_printE').addEventListener('click', function() {
+        window.print();
+    });
 });

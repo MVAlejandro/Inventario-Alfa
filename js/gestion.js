@@ -329,7 +329,7 @@ function cargarDatosEnModal(movimiento) {
     document.getElementById('edit_id_movimiento').value = movimiento.id_movimiento;
     document.getElementById('edit_id_display').value = movimiento.id_movimiento;
     document.getElementById('edit_fecha').value = movimiento.fecha;
-    document.getElementById('edit_movimiento').value = movimiento.nombre_movimiento;
+    document.getElementById('edit_movimiento').value = movimiento.tipo_movimiento;
     
     // Campos editables
     document.getElementById('edit_cantidad').value = movimiento.cantidad;

@@ -123,7 +123,8 @@ function generarTablaProductos(productos) {
 const mapaAlmacenes = {
     'NAVE 1': 1,
     'NAVE 2': 2,
-    'NAVE 3': 3
+    'NAVE 3': 3,
+    'PRODUCCION':4
 };
 
 // Evento al dar click al botón Agregar Producto Excel

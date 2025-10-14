@@ -40,6 +40,7 @@ export async function generarInventarioInd() {
             .select(`
                 id_producto,
                 codigo,
+                descripcion,
                 id_almacen,
                 almacenes(nombre),
                 conteos (
@@ -70,6 +71,7 @@ export async function generarInventarioInd() {
                 inventario.push({
                     id_producto: producto.id_producto,
                     codigo: producto.codigo,
+                    descripcion: producto.descripcion,
                     almacen: producto.id_almacen,
                     almacen_nombre: producto.almacenes?.nombre,
                     semana_conteo: conteo.semana_conteo,
@@ -107,6 +109,7 @@ function generarTablaInventarioInd(productos) {
         `<tr data-id-tarea="${idProductos}">
             <th scope="row">${p.anio_conteo} / ${p.semana_conteo}</th>
             <td>${p.codigo}</td>
+            <td>${p.descripcion}</td>
             <td>${p.almacen_nombre}</td>
             <td>${p.stock_real}</td>
         </tr>`;
@@ -115,7 +118,7 @@ function generarTablaInventarioInd(productos) {
     // Agregar fila de totales al final
     tbody.innerHTML += 
     `<tr class="table-active fw-bold">
-        <td colspan="3">TOTALES</td>
+        <td colspan="4">TOTALES</td>
         <td>${totalStockReal}</td>
     </tr>`;
 }
