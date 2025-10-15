@@ -89,6 +89,12 @@ h1 {
     border-radius: 100%;
 }
 
+.btn-sem {
+    width: 45px;
+    font-size: 0.95rem;
+    padding: 12px;
+}
+
 /* Tablas */
 .table {
     background-color: white;
@@ -148,6 +154,11 @@ h1 {
 
     .form-control {
         font-size: 0.9rem;
+    }
+
+    .btn-sem {
+        width: 50px;
+        padding: 12px;
     }
 }
 

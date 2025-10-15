@@ -342,6 +342,8 @@ export async function cargarFiltrosG(añoSel, semanaSel) {
 
     const selectAnio = document.getElementById(añoSel);
     const selectSemana = document.getElementById(semanaSel);
+    const btnPrev = document.getElementById('btn_prev');
+    const btnNext = document.getElementById('btn_next');
 
     // Llenar select de años
     selectAnio.innerHTML = '<option value="0">Seleccione...</option>';
@@ -374,4 +376,72 @@ export async function cargarFiltrosG(añoSel, semanaSel) {
             selectSemana.innerHTML = '<option value="0">Seleccione...</option>';
         }
     });
+
+    // Escuchar cuando se selecciona una semana
+    selectSemana.addEventListener('change', function () {
+        const semanaSeleccionada = this.value;
+
+        if (semanaSeleccionada !== "0") {
+            btnPrev.disabled = false;
+            btnNext.disabled = false;
+        } else {
+            btnPrev.disabled = true;
+            btnNext.disabled = true;
+        }
+    });
+
+    return semanasPorAnio;
+}
+
+export function cambiarSemana(direccion, semanasPorAnioGlobal) {
+    const selectAnio = document.getElementById('filtro_anioG');
+    const selectSemana = document.getElementById('filtro_semanaG');
+
+    let anio = parseInt(selectAnio.value);
+    let semana = parseInt(selectSemana.value);
+
+    if (!anio || !semana) return;
+
+    const semanasActuales = Array.from(semanasPorAnioGlobal[anio]).sort((a, b) => a - b);
+    const idxActual = semanasActuales.indexOf(semana);
+    const nuevoIdx = idxActual + direccion;
+
+    if (nuevoIdx >= 0 && nuevoIdx < semanasActuales.length) {
+        selectSemana.value = semanasActuales[nuevoIdx];
+        generarInventarioGral();
+    } else if (nuevoIdx < 0) {
+        const aniosOrdenados = Object.keys(semanasPorAnioGlobal).map(Number).sort((a, b) => a - b);
+        const idxAnio = aniosOrdenados.indexOf(anio);
+
+        if (idxAnio > 0) {
+            const nuevoAnio = aniosOrdenados[idxAnio - 1];
+            const semanasNuevoAnio = Array.from(semanasPorAnioGlobal[nuevoAnio]).sort((a, b) => a - b);
+
+            selectAnio.value = nuevoAnio;
+            selectAnio.dispatchEvent(new Event('change'));
+
+            setTimeout(() => {
+                selectSemana.value = semanasNuevoAnio[semanasNuevoAnio.length - 1];
+                selectSemana.dispatchEvent(new Event('change'));
+                generarInventarioGral();
+            }, 100);
+        }
+    } else if (nuevoIdx >= semanasActuales.length) {
+        const aniosOrdenados = Object.keys(semanasPorAnioGlobal).map(Number).sort((a, b) => a - b);
+        const idxAnio = aniosOrdenados.indexOf(anio);
+
+        if (idxAnio < aniosOrdenados.length - 1) {
+            const nuevoAnio = aniosOrdenados[idxAnio + 1];
+            const semanasNuevoAnio = Array.from(semanasPorAnioGlobal[nuevoAnio]).sort((a, b) => a - b);
+
+            selectAnio.value = nuevoAnio;
+            selectAnio.dispatchEvent(new Event('change'));
+
+            setTimeout(() => {
+                selectSemana.value = semanasNuevoAnio[0];
+                selectSemana.dispatchEvent(new Event('change'));
+                generarInventarioGral();
+            }, 100);
+        }
+    }
 }

@@ -1,7 +1,7 @@
 
 // IMPORTACIÓN DE FUNCIONES EXTERNAS
 import { cargarFiltros, generarInventarioInd } from './reportes/inventario_almacen.js'
-import { cargarFiltrosG, generarInventarioGral } from './reportes/inventario_gral.js'
+import { cargarFiltrosG, generarInventarioGral, cambiarSemana } from './reportes/inventario_gral.js'
 import { cargarFiltrosE, generarEstadisticas } from './reportes/inventario_grafico.js'
 
 // INVENTARIO POR ALMACEN
@@ -18,16 +18,22 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // INVENTARIO GENERAL
-document.addEventListener('DOMContentLoaded', () => {
-    cargarFiltrosG('filtro_anioG', 'filtro_semanaG', 'almacenG')
+let semanasPorAnioGlobal = {};
+
+document.addEventListener('DOMContentLoaded', async () => {
+    semanasPorAnioGlobal = await cargarFiltrosG('filtro_anioG', 'filtro_semanaG', 'almacenG');
 
     document.getElementById('btn_genG').addEventListener('click', function() {
-        generarInventarioGral()
+        generarInventarioGral();
     });
 
     document.getElementById('btn_printG').addEventListener('click', function() {
         window.print();
     });
+
+    // Botones de navegación de semana
+    document.getElementById('btn_prev').addEventListener('click', () => cambiarSemana(-1, semanasPorAnioGlobal));
+    document.getElementById('btn_next').addEventListener('click', () => cambiarSemana(1, semanasPorAnioGlobal));
 });
 
 // GRÁFICO DE REPORTE
