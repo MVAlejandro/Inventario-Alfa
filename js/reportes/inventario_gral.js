@@ -21,9 +21,20 @@ export async function generarInventarioGral() {
         // Obtener conteos
         const { data: conteos, error: errorConteos } = await supabase
             .from('conteos')
-            .select('stock_real, semana_conteo, anio_conteo, id_producto');
+            .select(`
+                stock_real,
+                semana_conteo,
+                anio_conteo,
+                id_producto,
+                productos (
+                id_almacen
+                )
+            `);
 
         if (errorConteos) throw errorConteos;
+
+        // Aplicar filtro de almacen manualmente
+        const conteosPrefiltrados = conteos.filter(c => c.productos?.id_almacen !== 5);
 
         // Función auxiliar para obtener semana anterior
         const obtenerSemanaAnterior = (semana, anio) => {
@@ -37,7 +48,7 @@ export async function generarInventarioGral() {
         const { semana: semanaAnterior, anio: anioAnterior } = obtenerSemanaAnterior(semanaSeleccionada, anioSeleccionado);
 
         // Obtener stock contado de la semana anterior como inventario base
-        const conteosAnteriores = conteos.filter(c =>
+        const conteosAnteriores = conteosPrefiltrados.filter(c =>
             c.anio_conteo === anioAnterior && c.semana_conteo === semanaAnterior
         );
 
@@ -79,7 +90,7 @@ export async function generarInventarioGral() {
         const trasladosComep = getCantidad('TRASPASO A COMEP');
 
         // Obtener conteo real de la semana seleccionada
-        const conteosFiltrados = conteos.filter(c =>
+        const conteosFiltrados = conteosPrefiltrados.filter(c =>
             c.anio_conteo === anioSeleccionado && c.semana_conteo === semanaSeleccionada
         );
 
@@ -124,9 +135,20 @@ export async function generarResumenInventarios() {
 
         const { data: conteos, error: errorConteos } = await supabase
             .from('conteos')
-            .select('stock_real, semana_conteo, anio_conteo, id_producto');
+            .select(`
+                stock_real,
+                semana_conteo,
+                anio_conteo,
+                id_producto,
+                productos (
+                id_almacen
+                )
+            `);
 
         if (errorConteos) throw errorConteos;
+
+        // Aplicar filtro de almacen manualmente
+        const conteosPrefiltrados = conteos.filter(c => c.productos?.id_almacen !== 5);
 
         // Obtener lista de combinaciones año+semana únicas (de movimientos y conteos)
         const semanasSet = new Set();
@@ -159,7 +181,7 @@ export async function generarResumenInventarios() {
 
         // Mapear conteos por semana y año para acceso rápido
         const conteosMap = {};
-        conteos.forEach(c => {
+        conteosPrefiltrados.forEach(c => {
             const key = `${c.anio_conteo}-${c.semana_conteo}`;
             if (!conteosMap[key]) conteosMap[key] = [];
             conteosMap[key].push(c);
@@ -322,18 +344,26 @@ function generarTablaInventarioGral(resumen) {
 }
 
 export async function cargarFiltrosG(añoSel, semanaSel) {
-    const { data: conteos, error } = await supabase
+    const { data: conteos, error: errorConteos } = await supabase
         .from('conteos')
-        .select('semana_conteo, anio_conteo');
+        .select(`
+            stock_real,
+            semana_conteo,
+            anio_conteo,
+            id_producto,
+            productos (
+            id_almacen
+            )
+        `);
 
-    if (error) {
-        console.error('Error cargando semanas/años:', error);
-        return;
-    }
+    if (errorConteos) throw errorConteos;
+
+    // Aplicar filtro de almacen manualmente
+    const conteosPrefiltrados = conteos.filter(c => c.productos?.id_almacen !== 5);
 
     // Agrupar semanas por año
     const semanasPorAnio = {};
-    conteos.forEach(c => {
+    conteosPrefiltrados.forEach(c => {
         if (!semanasPorAnio[c.anio_conteo]) {
             semanasPorAnio[c.anio_conteo] = new Set();
         }

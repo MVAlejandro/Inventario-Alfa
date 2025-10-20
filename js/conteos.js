@@ -250,7 +250,8 @@ const mapaAlmacenes = {
     'NAVE 1': 1,
     'NAVE 2': 2,
     'NAVE 3': 3,
-    'PRODUCCION':4
+    'PRODUCCION':4,
+    'MATERIA PRIMA':5
 };
 
 // Función para buscar un producto por su código y almacén
