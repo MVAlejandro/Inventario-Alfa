@@ -107,19 +107,19 @@ function generarTablaInventarioInd(productos) {
 
         tbody.innerHTML += 
         `<tr data-id-tarea="${idProductos}">
-            <th scope="row">${p.anio_conteo} / ${p.semana_conteo}</th>
+            <th class="text-center" scope="row">${p.anio_conteo} / ${p.semana_conteo}</th>
             <td>${p.codigo}</td>
             <td>${p.descripcion}</td>
             <td>${p.almacen_nombre}</td>
-            <td>${p.stock_real}</td>
+            <td class="text-center">${p.stock_real.toLocaleString('en-US')}</td>
         </tr>`;
     });
 
     // Agregar fila de totales al final
     tbody.innerHTML += 
     `<tr class="table-active fw-bold">
-        <td colspan="4">TOTALES</td>
-        <td>${totalStockReal}</td>
+        <td class="text-center" colspan="4">TOTALES</td>
+        <td class="text-center">${totalStockReal.toLocaleString('en-US')}</td>
     </tr>`;
 }
 

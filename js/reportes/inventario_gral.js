@@ -303,39 +303,39 @@ function generarTablaInventarioGral(resumen) {
     tbody.innerHTML = 
         `<tr>
             <td class="fw-bold">INVENTARIO INICIAL</td>
-            <td>${resumen.inventarioInicial}</td>
+            <td>${resumen.inventarioInicial.toLocaleString('en-US')}</td>
         </tr>
         <tr>
             <td class="fw-bold">ENTRADAS</td>
-            <td>${resumen.entradas}</td>
+            <td>${resumen.entradas.toLocaleString('en-US')}</td>
         </tr>
         <tr>
             <td class="fw-bold">SALIDAS POR FACTURA</td>
-            <td>${resumen.salidasFactura}</td>
+            <td>${resumen.salidasFactura.toLocaleString('en-US')}</td>
         </tr>
         <tr>
             <td class="fw-bold">TRASPASOS A MESAS</td>
-            <td>${resumen.trasladosMesas}</td>
+            <td>${resumen.trasladosMesas.toLocaleString('en-US')}</td>
         </tr>
         <tr>
             <td class="fw-bold">DESARME</td>
-            <td>${resumen.desarme}</td>
+            <td>${resumen.desarme.toLocaleString('en-US')}</td>
         </tr>
         <tr>
             <td class="fw-bold">TRASPASO A COMEP</td>
-            <td>${resumen.trasladosComep}</td>
+            <td>${resumen.trasladosComep.toLocaleString('en-US')}</td>
         </tr>
         <tr class="table-active">
             <td class="fw-bold">TOTAL EN SISTEMA</td>
-            <td class="fw-bold">${resumen.totalSistema}</td>
+            <td class="fw-bold">${resumen.totalSistema.toLocaleString('en-US')}</td>
         </tr>
         <tr class="table-active">
             <td class="fw-bold">TOTAL CONTADO</td>
-            <td class="fw-bold">${resumen.totalContado}</td>
+            <td class="fw-bold">${resumen.totalContado.toLocaleString('en-US')}</td>
         </tr>
         <tr class="table-active">
             <td class="fw-bold">DIFERENCIA</td>
-            <td class="fw-bold ${claseDiferencia}">${resumen.diferencia}</td>
+            <td class="fw-bold ${claseDiferencia}">${resumen.diferencia.toLocaleString('en-US')}</td>
         </tr>
         <tr class="table-info">
             <td class="fw-bold">CONFIABILIDAD</td>

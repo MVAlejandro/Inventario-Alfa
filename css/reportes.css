@@ -105,11 +105,10 @@ h1 {
 
 .table th {
     background-color: #f1f1f1;
-    text-align: center;
     font-weight: bold;
 }
 
-.table td {
+#reporteGral_tabla {
     text-align: center;
 }
 
