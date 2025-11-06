@@ -1,0 +1,94 @@
+/* Ocultar avbar */
+.navbar-nav, .navbar-toggler {
+    display: none !important;
+}
+
+/* Banner principal */
+#banner {
+    position: relative;
+    background-image: url('/assets/images/index-background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 500px;
+    color: var(--text-light); 
+    z-index: 0;
+    margin-top: 0;
+}
+
+#banner::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+#banner > * {
+  position: relative;
+  z-index: 2;
+}
+
+#banner-title {
+  font-size: 3rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  animation: fadeInUp 1s ease-in-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Estilos generales para cards */
+.card {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+    transition: transform 0.3s ease;
+    border-radius: 1rem;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Cards de sección de pendientes */
+.resume-card {
+    box-shadow: -5px 0px var(--primary);
+}
+
+.resume-cant {
+    font-size: 30px;
+    font-weight: bold;
+    padding-top: 0px;
+}
+
+@media (max-width: 768px) {
+    #inventory-resume {
+        padding-top: 0px !important;
+    }
+}
+
+/* Cards de sección de envíos */
+#inventory-stat-container {
+    background-color: var(--background-light) !important;
+    border-radius: 1rem;
+}
+
+/* Cards de sección de accesos directos */
+.access-card{
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: calc(100% - 12px) center;
+    background-size: 22px 22px;
+    padding-right: 24px;
+}

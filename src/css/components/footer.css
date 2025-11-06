@@ -1,0 +1,10 @@
+#site-footer {
+    background-color: var(--background-dark);
+    color: var(--text-light);
+    padding: 15px;
+    text-align: center;
+}
+
+#footer-text {
+    font-size: 0.9rem;
+}

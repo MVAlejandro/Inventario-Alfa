@@ -1,0 +1,36 @@
+/* Estilos de la página y estructura */
+#products-header {
+    margin-top: 0;
+}
+
+#products-header-container {
+    background-color: var(--background-light) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+#products-form-container, #products-filter-container, .table-responsive, #products-pages-container {
+    background-color: var(--background-light) !important;
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+th {
+    color: var(--secondary) !important;
+}
+
+/* Estilos de texto para la tabla */
+.product-code {
+    font-weight: bold;
+}
+
+.product-description, #products-pages-results {
+    font-size: 13px;
+    color: var(--secondary) !important;
+}
+
+.client-buttons {
+    padding: 0px;
+    gap: 8px;
+    display: flex;
+    justify-content: flex-end;
+}

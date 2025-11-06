@@ -1,0 +1,93 @@
+
+/*--- Barra de relleno superior ---*/
+#top-bar {
+    background-color: var(--primary);
+    height: 38.4px;
+}
+
+#btn-logout {
+    color: var(--text-light);
+    height: 35px;
+    border-radius: 4px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 20px;
+    text-transform: none;
+}
+
+#btn-logout:hover {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#btn-logout:focus {
+    outline: none;
+    box-shadow: 0 0 10px var(--primary-dark);
+}
+
+/*--- Barra de navegación principal ---*/
+#site-navbar {
+    background-color: var(--secondary);
+    border: 1px solid var(--background-light);
+    padding: 0px 40px 0px 40px;
+}
+
+#nav-logo, #nav-fill {
+    padding: 10px;
+    margin: 0; 
+}
+
+.nav-prin {
+    color: var(--text-light);
+}
+
+.nav-prin.link-active {
+    color: var(--primary);
+    font-weight: bold;
+}
+
+.nav-prin.link-active::after {
+    width: 100%;
+}
+
+@media (min-width: 992px){
+    .nav-prin {
+        position: relative;
+        transition: color 0.3s ease;
+    }
+    .nav-prin:hover {
+        color: var(--primary); 
+    }
+    .nav-prin::after {
+        content: "";
+        display: block;
+        width: 0;
+        height: 3px;
+        background: var(--primary); 
+        transition: width 0.3s;
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+    }
+    .nav-prin:hover::after {
+        width: 100%; 
+    }
+}
+
+#nav-fill {
+    color: var(--secondary);
+}
+
+@media (max-width: 768px) {
+    #nav-fill {
+        display: none;
+    }
+}
+
+@media (max-width: 430px) {
+    #site-navbar {
+        padding: 5px 40px 10px 40px;
+    }
+}

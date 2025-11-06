@@ -1,0 +1,35 @@
+/* Estilos de la página y estructura */
+#counts-header {
+    margin-top: 0;
+}
+
+#counts-header-container {
+    background-color: var(--background-light) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+#counts-form-container, #counts-filter-container, .table-responsive, #counts-pages-container {
+    background-color: var(--background-light) !important;
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+th {
+    color: var(--secondary) !important;
+}
+
+@media (min-width: 500px) and (max-width: 768px) {
+    #filter-btn {
+        margin-top: 1rem;
+    }
+}
+
+/* Estilos de texto para la tabla */
+.count-week {
+    font-weight: bold;
+}
+
+.count-year, #counts-pages-results {
+    font-size: 13px;
+    color: var(--secondary) !important;
+}

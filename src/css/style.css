@@ -1,0 +1,246 @@
+/* Variables de colores generales */
+:root {
+    --primary: #8FC74A;
+    --primary-light: #E8F5E9;
+    --primary-dark: #6c9639;
+    --secondary: #7B7B7B;
+    --secondary-light: #b6b6b6;
+    --canceled-light: #dd989f;
+    --canceled-dark: #79111c;
+    --background: #F5F5F5;
+    --background-dark: #222222;
+    --background-light: #fff;
+    --text-light: #fff;
+    --danger-light: #dd989f;
+    --danger-dark: #991522;
+}
+
+/* Estilos generales de la página y estructura */
+body {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+main {
+    flex: 1;
+    background-color: var(--background);
+}
+
+section {
+    margin: 20px 0px 20px 0px;
+}
+
+p, h5, h4 {
+    margin-bottom: 0px;
+}
+
+table {
+    font-size: 15px;
+}
+
+@media (max-width: 430px) {
+    table {
+        font-size: 13px;
+    }
+}
+
+/* Contenedores de figuras para los iconos */
+.icon-circle {
+    color: var(--primary);    
+    background: var(--primary-light);
+    border-radius: 100%;        
+    width: 64px;                      
+    height: 64px;                      
+    padding: 16px;                    
+}
+
+.icon-square {
+    color: var(--primary);    
+    background: var(--primary-light);
+    border-radius: 15px;        
+    width: 60px;                      
+    height: 60px;                      
+    padding: 14px;                    
+}
+
+/* Estilos para formularios */
+.form-control, .form-select{
+    border-radius: 10px;
+    border: 1px solid var(--secondary-light);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 5px var(--primary-dark);
+}
+
+.form-control:disabled {
+    background-color: transparent !important;
+    color: var(--secondary);
+    font-weight: 500;
+}
+
+input::placeholder, textarea::placeholder {
+    color: var(--primary-dark) !important;
+    font-style: italic;
+    opacity: 1;
+    font-size: 14px;
+}
+
+.label-over-border {
+    position: relative;
+}
+
+.label-over-border label {
+    position: absolute;
+    top: -1.35rem;
+    background-color: var(--background-light);
+    color: var(--secondary);
+    padding: 0 0.2rem;
+    font-size: 0.875rem;
+    z-index: 1;
+}
+
+/* Estilos para filtros */
+@media (max-width: 430px) {
+    .label-over-border {
+        margin-bottom: 1.5rem;
+        padding-left: 0;
+    }
+}
+
+/* Eliminar flechas de inputs numericos */
+.no-arrows::-webkit-outer-spin-button,
+.no-arrows::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Estilos para botones */
+.btn-primary, .btn:disabled {
+    border: 1px solid var(--primary);
+    background-color: var(--primary);
+    border-radius: 11px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:focus {
+    outline: none;
+    box-shadow: 0 0 10px var(--primary-dark);
+}
+
+.btn-secondary {
+    border: 1px solid var(--secondary-light);
+    background-color: transparent;
+    color: var(--secondary);
+    border-radius: 11px;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: var(--secondary);
+    border-color: var(--primary-dark);
+    color: var(--text-light);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-secondary:focus {
+    outline: none;
+    box-shadow: 0 0 10px var(--primary-dark);
+}
+
+/* Estilos para botones de las tabs */
+.tab-btn {
+    background-color: var(--background);
+    border: 1px solid var(--secondary-light);
+    color: var(--background-dark);
+    font-weight: bold;
+    font-size: 0.9rem;
+    border-radius: 11px !important;
+    margin-right: 8px;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    background-color: var(--primary) !important;
+    color: var(--text-light);
+}
+
+.tab-btn:hover {
+    background-color: var(--primary-light);
+    color: var(--secondary);
+}
+
+/* Estilos para botones de edición de entradas */
+.action-buttons {
+    padding: 0px;
+    gap: 8px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-edit, .btn-delete{
+    border-radius: 12px;
+    border: 1px solid var(--secondary-light);
+}
+
+.btn-edit {
+    color: var(--primary-dark);
+}
+
+.btn-edit:hover {
+    background-color: var(--primary-dark);
+    color: var(--text-light);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-delete {
+    color: var(--canceled-dark);
+}
+
+.btn-delete:hover {
+    background-color: var(--canceled-dark);
+    color: var(--text-light);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-delete-confirm {
+    width: 85px;
+}
+
+/* Estilos para paginación y su navegación */
+.pagination .page-link {
+    border: 1px solid var(--secondary-light);
+    background-color: var(--background);
+    color: var(--secondary);
+    transition: all 0.3s ease;
+}
+
+.pagination .page-link:hover {
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.pagination .page-link:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(143, 199, 74, 0.5);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--text-light);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+

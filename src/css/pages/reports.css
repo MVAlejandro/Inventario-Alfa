@@ -1,0 +1,108 @@
+/* Estilos de la página y estructura */
+#reports-header {
+    margin-top: 0;
+}
+
+#reports-header-container {
+    background-color: var(--background-light) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+#reports-info-container, #reports-filter-container, #canvas-container, #store-report-filter-container, .card, .table-responsive, #reports-pages-container {
+    background-color: var(--background-light) !important;
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+#reports-info-container {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), -4px 0px var(--primary);
+    animation: fadeInUp 0.8s ease-in-out;
+}
+
+@media (max-width: 768px) {
+    #graphic-report-container {
+        margin-top: 20px;
+    }
+}
+
+.week-buttons {
+    border: none;
+    padding: 0px;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }   
+}
+
+#reports-info-text {
+    font-size: 13px;
+    color: var(--secondary) !important;
+}
+
+th {
+    color: var(--secondary) !important;
+}
+
+input:disabled {
+    background-color: var(--background-light) !important;
+    color: var(--primary-dark) !important;
+}
+
+/* Estilos de cards */
+.general-report-cant {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.card {
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+@media (min-width: 500px) and (max-width: 768px) {
+    #store-report-cards {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 50vh;
+    }
+}
+
+/* Estilos de texto para la tabla */
+table {
+    margin-bottom: 0 !important;
+}
+
+#general-report-table tbody {
+    font-size: 13px;
+}
+
+.report-week {
+    font-weight: bold;
+}
+
+.report-year {
+    font-size: 13px;
+    color: var(--secondary) !important;
+}
+
+.report-condition, .report-agree {
+    padding: 5px 12px 5px 12px;
+    border-radius: 50px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.btn-update {
+    padding: 4px 8px 4px 8px;
+}

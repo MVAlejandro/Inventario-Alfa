@@ -1,0 +1,36 @@
+/* Estilos de la página y estructura */
+#movements-header {
+    margin-top: 0;
+}
+
+#movements-header-container {
+    background-color: var(--background-light) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+#movements-form-container, #movements-filter-container, .table-responsive, #movements-pages-container {
+    background-color: var(--background-light) !important;
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+th {
+    color: var(--secondary) !important;
+}
+
+/* Estilos de texto para la tabla */
+.movement-week {
+    font-weight: bold;
+}
+
+.movement-year, #movements-pages-results {
+    font-size: 13px;
+    color: var(--secondary) !important;
+}
+
+.client-buttons {
+    padding: 0px;
+    gap: 8px;
+    display: flex;
+    justify-content: flex-end;
+}

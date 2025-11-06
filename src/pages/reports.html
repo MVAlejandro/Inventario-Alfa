@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reportes de Inventario - Pallets Alfa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+<body>
+
+    <!-- BARRA DE RELLENO SUPERIOR -->
+    <div id="top-bar">
+
+    </div>
+
+    <!-- BARRA DE NAVEGACIÓN -->
+    <nav id="site-navbar" class="navbar navbar-expand-lg">
+
+    </nav>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <main>
+        <!-- SECCIÓN DEL ENCABEZADO -->
+        <section id="reports-header">
+            <div id="reports-header-container" class="container-fluid p-3">
+                <div class="row">
+                    <div class="col d-flex align-items-center">
+                        <div class="icon-square ms-3 me-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-clipboard-data" viewBox="0 0 16 16">
+                                <path d="M4 11a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0zm6-4a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0zM7 9a1 1 0 0 1 2 0v3a1 1 0 1 1-2 0z"/>
+                                <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
+                                <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
+                            </svg>
+                        </div>
+                        <h4 class="fw-bold">Reportes de Inventario</h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN INFORMATIVA DE LA SEMANA -->
+        <section id="reports-info">
+            <div id="reports-info-container" class="container p-4">
+                <h5 id="reports-info-week" class="fw-bold">Semana del 20 al 26 de octubre del 2025</h5>
+                <p id="reports-info-text" class="pt-2">Esta sección muestra el estado de los inventarios y sus estadísticas.</p>
+            </div>
+        </section>
+
+        <!-- SECCIÓN DE FILTROS GENERALES -->
+        <section id="reports-filter pt-3 pb-3">
+            <div id="reports-filter-container" class="container pt-4 pb-3">
+                <div class="d-flex align-items-center ms-4 mb-4">
+                    <button id="btn-prev" class="btn me-3 week-buttons">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
+                        </svg>
+                    </button>
+                    <h5>Semana 42</h5>
+                    <button id="btn-next" class="btn ms-3 week-buttons">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="row ms-2 me-2">
+                    <div class="col-lg-3 col-md-4 d-flex align-items-center label-over-border">
+                        <label for="year-filter" class="form-label m-2">Filtrar por Año</label>
+                        <select class="form-select" id="year-filter">
+                            <option value="0">Todos</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3 col-md-4 d-flex align-items-center label-over-border">
+                        <label for="week-filter" class="form-label m-2">Filtrar por Semana</label>
+                        <select class="form-select" id="week-filter">
+                            <option value="0">Todos</option>
+                        </select>
+                    </div>
+                    <div class="col-md d-flex align-items-center justify-content-end">
+                        <button id="filter-btn" class="btn btn-primary d-flex align-items-center ps-3 pe-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                            </svg>
+                            <p class="ps-2">Filtrar</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN DE REPORTE GENERAL -->
+        <section id="report-statistics">
+            <div id="report-statistics-container" class="container">
+                <div class="row">
+                    <div id="general-report-container" class="col-lg-3">
+                        <div class="row">
+                            <div class="col-sm-6 col-lg-12">
+                                <div id="general-report-container" class="table-responsive">
+                                    <table id="general-report-table" class="table table-hover">
+                                        <thead>
+                                            <tr class="table-light">
+                                                <th class="p-3 ps-4">Concepto</th>
+                                                <th class="text-center p-3 ps-2">Cantidad</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="ps-4">INVENTARIO INICIAL</td>
+                                                <td class="text-center">59,195</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="ps-4">ENTRADAS</td>
+                                                <td class="text-center">6,834</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="ps-4">SALIDAS POR FACTURA</td>
+                                                <td class="text-center">10,745</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="ps-4">TRASPASOS A MESAS</td>
+                                                <td class="text-center">7,232</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="ps-4">DESARME</td>
+                                                <td class="text-center">2,702</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="ps-4">TRASPASO A COMEP</td>
+                                                <td class="text-center">0</td>
+                                            </tr>
+                                            <tr class="table-active">
+                                                <td class="fw-bold ps-4">TOTAL EN SISTEMA</td>
+                                                <td class="text-center fw-bold">59,814</td>
+                                            </tr>
+                                            <tr class="table-active">
+                                                <td class="fw-bold ps-4">TOTAL CONTADO</td>
+                                                <td class="text-center fw-bold">58,459</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-lg-12">
+                                <div id="store-report-cards" class="row">
+                                    <div class="col-6 col-md-12">
+                                        <div class="card report-card mt-3">
+                                            <div class="card-body d-flex align-items-center justify-content-center text-center">
+                                                <div class="card-text">
+                                                    <p>Diferencia</p>
+                                                    <p class="general-report-cant ps-1 text-danger">-1,355</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-12">
+                                        <div class="card report-card mt-3">
+                                            <div class="card-body d-flex align-items-center justify-content-center text-center">
+                                                <div class="card-text">
+                                                    <p>Confiabilidad</p>
+                                                    <p class="general-report-cant ps-1 text-success">97.73%</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="graphic-report-container" class="col-lg-9">
+                        <div id="canvas-container" class="h-100">
+                            a
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </section>
+
+        <!-- SECCIÓN DE FILTROS POR ALMACÉN -->
+        <section id="store-report-filter pt-3 pb-3">
+            <div id="store-report-filter-container" class="container pt-4 pb-3">
+                <div class="row ps-3 pe-3">
+                    <div class="col-6 col-md-9 col-lg-10">
+                        <h5>Inventario por Productos</h5>
+                    </div>
+                    <div class="col-6 col-md-3 col-lg-2 d-flex align-items-center label-over-border pe-0 mb-0">
+                        <label for="store-filter" class="form-label m-2">Filtrar por Almacén</label>
+                        <select class="form-select" id="store-filter">
+                            <option value="0">Todos</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN DE REPORTE POR ALMACÉN -->
+        <section id="store-reports" class="container pb-4">
+            <div id="store-reports-container" class="table-responsive p-0">
+                <table id="store-report-table" class="table table-hover">
+                    <thead>
+                        <tr class="table-light">
+                            <th class="p-3 ps-4">AÑO / SEMANA</th>
+                            <th class="p-3 ps-2">PRODUCTO</th>
+                            <th class="p-3 ps-2">DESCRIPCIÓN</th>
+                            <th class="p-3 ps-2">ALMACÉN</th>
+                            <th class="p-3 ps-2">PISO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="p-3 ps-4">
+                                <p class="report-week">Semana 31</p>
+                                <p class="report-year">2025</p>
+                            </td>
+                            <td class="report-product p-3">MPSTRP</td>
+                            <td class="report-description p-3">Tarima Estándar de Reparación</td>
+                            <td class="report-store p-3">Nave 1</td>
+                            <td class="report-amount p-3">83</td>
+                        </tr>
+                        <tr class="table-active fw-bold">
+                            <td class="text-center" colspan="4">TOTALES</td>
+                            <td class="p-2">44,407</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    
+    <!-- FOOTER -->
+    <footer id="site-footer">
+
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script type="module" src="/src/js/pages/reports.js"></script>
+</body>
+</html>
