@@ -79,6 +79,7 @@ table {
 }
 
 .form-control:disabled {
+    border-color: var(--secondary) !important;
     background-color: transparent !important;
     color: var(--secondary);
     font-weight: 500;
@@ -196,22 +197,24 @@ input::placeholder, textarea::placeholder, #default-option {
 
 .btn-edit {
     color: var(--primary-dark);
+    box-shadow: 0 2px 4px rgba(108, 150, 57, 0.3);
 }
 
 .btn-edit:hover {
     background-color: var(--primary-dark);
     color: var(--text-light);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 .btn-delete {
     color: var(--canceled-dark);
+    box-shadow: 0 2px 4px rgba(121, 17, 28, 0.3);
 }
 
 .btn-delete:hover {
     background-color: var(--canceled-dark);
     color: var(--text-light);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 .btn-delete-confirm {
@@ -234,7 +237,7 @@ input::placeholder, textarea::placeholder, #default-option {
 
 .pagination .page-link:focus {
     outline: none;
-    box-shadow: 0 0 10px rgba(143, 199, 74, 0.5);
+    box-shadow: 0 0 10px var(--primary-dark);
 }
 
 .pagination .page-item.active .page-link {

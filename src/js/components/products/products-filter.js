@@ -1,5 +1,5 @@
 // Servicios Supabase
-import { getProducts } from '../../services/product-service.js';
+import { getProducts } from '../../services/products-service.js';
 import { renderProductsTable } from './products-table.js';
 // Utilidades
 import { loadOptions } from '../../utils/load-select.js';

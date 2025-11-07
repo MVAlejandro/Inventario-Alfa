@@ -1,6 +1,6 @@
 import supabase from '../../supabase/supabase-client.js'
 // Servicios Supabase
-import { createProduct } from '../../services/product-service.js'; 
+import { createProduct } from '../../services/products-service.js'; 
 import { renderProductsTable } from './products-table.js'; 
 // Utilidades
 import { textValidate, codeValidate, inputValidate, selectValidate } from '../../utils/form-validations.js';
@@ -101,10 +101,10 @@ export async function addExcelProduct(event) {
         const columns = row.split('\t');
         if (columns.length < 4) continue;
 
-        const codigo = columnas[0].trim();
-        const nombre = columnas[1].trim();
-        const nombreAlmacen = columnas[2].trim().toUpperCase();
-        const descripcion = columnas[3].trim();
+        const codigo = columns[0].trim();
+        const nombre = columns[1].trim();
+        const nombreAlmacen = columns[2].trim().toUpperCase();
+        const descripcion = columns[3].trim();
         let fecha_creacion = new Date().toISOString().split('T')[0];
 
         // Asignar almacén en base al mapa

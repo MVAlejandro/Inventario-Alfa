@@ -26,6 +26,7 @@ document.addEventListener('click', function(e) {
         addManualProduct(e);
     }
 });
+
 // Declarar el botón del formulario Excel
 document.addEventListener('click', function(e) {
     if (e.target.id === 'btn-add-excel' || e.target.closest('#btn-add-excel')) {
@@ -60,10 +61,10 @@ const deleteModal = document.getElementById('delete-modal');
 deleteModal.addEventListener('show.bs.modal', event => {
     const button = event.relatedTarget;
     const idProduct = button.dataset.id;
-    document.getElementById('delete-id-producto').value = idProduct;
+    document.getElementById('delete-id-product').value = idProduct;
 
     // Limpiar información al cerrar modal
     deleteModal.addEventListener('hidden.bs.modal', () => {
-        document.getElementById('delete-id-producto').value = '';
+        document.getElementById('delete-id-product').value = '';
     });
 });
