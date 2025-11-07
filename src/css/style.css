@@ -84,7 +84,7 @@ table {
     font-weight: 500;
 }
 
-input::placeholder, textarea::placeholder {
+input::placeholder, textarea::placeholder, #default-option {
     color: var(--primary-dark) !important;
     font-style: italic;
     opacity: 1;

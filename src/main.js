@@ -8,3 +8,4 @@ import './css/components/footer.css';
 
 // Componentes JS
 import './js/components/navbar.js';
+import './js/components/index/resume-cards.js'
