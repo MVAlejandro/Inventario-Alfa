@@ -78,7 +78,7 @@ table {
     box-shadow: 0 0 5px var(--primary-dark);
 }
 
-.form-control:disabled {
+.form-control:disabled, .form-select:disabled {
     border-color: var(--secondary) !important;
     background-color: transparent !important;
     color: var(--secondary);

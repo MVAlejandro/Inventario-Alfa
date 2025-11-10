@@ -14,7 +14,7 @@ const storeMap = {
     'MATERIA PRIMA':5
 };
 
-// Función para agregar un cliente de forma manual
+// Función para agregar un producto de forma manual
 export async function addManualProduct(event) {
     event.preventDefault()
 

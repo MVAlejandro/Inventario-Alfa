@@ -18,7 +18,7 @@ function getWeekAndYear(date = new Date()) {
     return { semana: week, anio: d.getUTCFullYear() };
 }
 
-// Función para agregar un cliente de forma manual
+// Función para agregar un movimiento de forma manual
 export async function addManualMovement(event) {
     event.preventDefault()
 

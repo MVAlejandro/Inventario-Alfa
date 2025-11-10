@@ -29,3 +29,25 @@ export async function loadOptions(selectId, table, valueKey, textKey, selectedVa
         select.appendChild(option)
     })
 }
+
+export async function loadProducts(storeId) {
+    const { data, error } = await supabase
+        .from('inv_productos')
+        .select('id_producto, codigo')
+        .eq('id_almacen', storeId);
+
+    const selectProducto = document.getElementById('producto');
+    selectProducto.innerHTML = '<option value="0">Seleccione...</option>';
+
+    if (error) {
+        console.error("Error cargando productos:", error);
+        return;
+    }
+
+    data.forEach(prod => {
+        const option = document.createElement('option');
+        option.value = prod.id_producto;
+        option.textContent = prod.codigo;
+        selectProducto.appendChild(option);
+    });
+}

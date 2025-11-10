@@ -13,6 +13,9 @@ export async function renderProductsTable(productsParam = null) {
     } else {
         allProducts = await getProducts();
     }
+
+    // Ordenar el arreglo completo antes de paginar
+    allProducts.sort((a, b) => a.id_producto - b.id_producto);
     
     const tbody = document.querySelector('#products-table tbody');
     const pagination = document.querySelector('#products-pages .pagination');
