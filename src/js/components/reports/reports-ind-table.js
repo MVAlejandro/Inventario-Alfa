@@ -8,6 +8,9 @@ export async function renderStoreTable(countsParam = null) {
         allCounts = countsParam;
     }
     
+    // Ordenar el arreglo completo antes de insertar en la tabla
+    allCounts.sort((a, b) => a.id_conteo - b.id_conteo);
+
     const tbody = document.querySelector('#store-report-table tbody');
     // Limpiar tabla antes de insertar
     tbody.innerHTML = '';
@@ -23,7 +26,7 @@ export async function renderStoreTable(countsParam = null) {
     // Generar filas de conteos por producto
     allCounts.forEach((conteo) => {
         tbody.innerHTML += 
-        `<tr data-id-producto="${conteo.id_producto}">
+        `<tr data-id-conteo="${conteo.id_conteo}">
             <td class="p-3 ps-4">
                 <p class="report-week">Semana ${conteo.semana_conteo}</p>
                 <p class="report-year">${conteo.anio_conteo}</p>

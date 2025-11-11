@@ -79,7 +79,6 @@ export async function loadOptionsFilter(selectId, fields, defaultOption, selecte
     });
 }
 
-
 export async function loadProducts(storeId) {
     const { data, error } = await supabase
         .from('inv_productos')
