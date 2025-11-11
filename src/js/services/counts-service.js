@@ -26,6 +26,7 @@ export async function getCounts() {
             id_producto,
             inv_productos (
                 codigo,
+                descripcion,
                 id_almacen,
                 inv_almacenes (nombre)
             )
@@ -45,6 +46,7 @@ export async function getCounts() {
         observaciones: conteo.observaciones,
         id_producto: conteo.id_producto,
         codigo: conteo.inv_productos?.codigo,
+        descripcion: conteo.inv_productos?.descripcion,
         id_almacen: conteo.inv_productos?.id_almacen,
         almacen: conteo.inv_productos?.inv_almacenes?.nombre
     }));

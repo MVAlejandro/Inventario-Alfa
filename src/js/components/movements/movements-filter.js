@@ -1,43 +1,13 @@
 // Servicios Supabase
 import { getMovements } from '../../services/movements-service.js'; 
 import { renderMovementsTable } from './movements-table.js';
-
-async function loadOptionsFilter(selectId, fields) {
-    const select = document.getElementById(selectId)
-    if (!select) return;
-    select.innerHTML = '';
-    
-    // Obtener movimientos
-    const allMovements = await getMovements();
-    if (!allMovements) return;
-
-    const opciones = allMovements.map(m => {
-        if (Array.isArray(fields)) {
-            // Combinar varios campos
-            return fields.map(f => m[f]).filter(Boolean).join(' - ');
-        } else {
-            // Solo un campo
-            return m[fields];
-        }
-    });
-
-    // Eliminar duplicados y valores vacíos
-    const opcionesUnicas = [...new Set(opciones)].filter(v => v);
-
-    // Agregar opciones al select
-    select.innerHTML = '<option value="0">Todos</option>';
-    opcionesUnicas.forEach(opcion => {
-        const optionEl = document.createElement('option');
-        optionEl.value = opcion;
-        optionEl.textContent = opcion;
-        select.appendChild(optionEl);
-    });
-}
+// Utilidades
+import { loadOptionsFilter } from '../../utils/load-select.js';
 
 // Cargar las opciones de filtrado al iniciar la página
 document.addEventListener('DOMContentLoaded', async () => {
-    loadOptionsFilter('week-filter', ['anio', 'semana']);
-    loadOptionsFilter('movement-filter', 'tipo_movimiento');
+    loadOptionsFilter('week-filter', ['anio', 'semana'], "Todas");
+    loadOptionsFilter('movement-filter', 'tipo_movimiento', "Todos");
 })
 
 // Función de filtrado por valores seleccionados

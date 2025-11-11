@@ -1,5 +1,3 @@
-// Utilidades
-import { loadOptions } from '../../utils/load-select.js';
 
 document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById('movements-form');

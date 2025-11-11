@@ -12,7 +12,7 @@ import '../components/products/generate-form.js'
 
 // Servicios Supabase
 import { addManualProduct, addExcelProduct } from '../components/products/products-form.js';
-import { productsFilter } from '../components/products/products-filter.js';  
+import { productsFilter } from '../components/products/products-filter.js';
 import { renderProductsTable } from '../components/products/products-table.js';
 import { renderProductsEditModal } from '../components/products/products-modal.js';
 
