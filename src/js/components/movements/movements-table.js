@@ -76,33 +76,61 @@ export async function renderMovementsTable(movementsParam = null) {
     // Crear paginación
     const totalPages = Math.ceil(total / perPage);
     pagination.innerHTML = '';
-
+    
+    const maxVisible = 4; // máximo de botones visibles
+    let startPage = Math.max(currentPage - Math.floor(maxVisible / 2), 1);
+    let endPage = startPage + maxVisible - 1;
+    if (endPage > totalPages) {
+        endPage = totalPages;
+        startPage = Math.max(endPage - maxVisible + 1, 1);
+    }
+    
     // Botón Anterior
     pagination.innerHTML += 
         `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}" data-page="prev">
             <a class="page-link" href="#">&laquo;</a>
         </li>`;
-
-    // Números de página
-    for (let i = 1; i <= totalPages; i++) {
+    
+    // Primera página + ...
+    if (startPage > 1) {
         pagination.innerHTML += 
-        `<li class="page-item ${i === currentPage ? 'active' : ''}" data-page="${i}">
-            <a class="page-link" href="#">${i}</a>
-        </li>`;
+            `<li class="page-item" data-page="1"><a class="page-link" href="#">1</a></li>`;
+        if (startPage > 2) {
+            pagination.innerHTML += 
+                `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        }
     }
-
+    
+    // Botones centrales
+    for (let i = startPage; i <= endPage; i++) {
+        pagination.innerHTML += 
+            `<li class="page-item ${i === currentPage ? 'active' : ''}" data-page="${i}">
+                <a class="page-link" href="#">${i}</a>
+            </li>`;
+    }
+    
+    // Última página + ...
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+            pagination.innerHTML += 
+                `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        }
+        pagination.innerHTML += 
+            `<li class="page-item" data-page="${totalPages}"><a class="page-link" href="#">${totalPages}</a></li>`;
+    }
+    
     // Botón Siguiente
     pagination.innerHTML += 
         `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}" data-page="next">
             <a class="page-link" href="#">&raquo;</a>
         </li>`;
-
+    
     // Añadir los eventos de clic a la paginación
     pagination.querySelectorAll('.page-item').forEach(item => {
         item.addEventListener('click', e => {
             e.preventDefault();
             const type = item.dataset.page;
-
+    
             if (type === 'prev' && currentPage > 1) {
                 currentPage--;
             } else if (type === 'next' && currentPage < totalPages) {
@@ -111,7 +139,7 @@ export async function renderMovementsTable(movementsParam = null) {
                 currentPage = parseInt(type);
             }
 
-            renderMovementsTable();
+            renderProductsTable();
         });
     });
 }

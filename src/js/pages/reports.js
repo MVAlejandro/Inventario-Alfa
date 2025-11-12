@@ -12,17 +12,22 @@ import '../components/navbar.js';
 // Servicios Supabase
 import { indReportFilter, gralReportFilter } from '../components/reports/reports-filter.js';
 
-// Declarar el botón de filtrado
-document.addEventListener('click', function(e) {
-    if (e.target.id === 'filter-btn' || e.target.closest('#filter-btn')) {
-        indReportFilter(e);
-        gralReportFilter(e);
+document.addEventListener('DOMContentLoaded', () => {
+    // Filtrar tabla individual con el cambio del select
+    const storeFilter = document.getElementById('store-filter');
+    if (storeFilter) {
+        storeFilter.addEventListener('change', (e) => {
+            indReportFilter(e);
+        });
     }
-});
 
-// Filtrar tabla individual con el cambio del select
-const storeFilter = document.getElementById('store-filter')
-storeFilter.addEventListener('change', function(e) {
-    indReportFilter(e)
+    // Declarar el botón de filtrado
+    const filterBtn = document.getElementById('filter-btn');
+    if (filterBtn) {
+        filterBtn.addEventListener('click', (e) => {
+            indReportFilter(e);
+            gralReportFilter(e);
+        });
+    }
 });
    

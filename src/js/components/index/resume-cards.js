@@ -1,7 +1,8 @@
 // Servicios Supabase
 import { generateGralSummaries } from "../../services/reports-service";
-import { obtainLastWeek } from "../../utils/last-week";
+import { obtainLastWeek } from "../../utils/week-functions";
 import { renderDifference, renderReliability } from "../reports/reports-gral-table";
+import { renderGralGraphic } from "../reports/reports-graphic";
 
 export async function createResumeCards() {
     const lastWeek = await obtainLastWeek();
@@ -18,4 +19,5 @@ export async function createResumeCards() {
 
     renderDifference(filtered[0] || {});
     renderReliability(filtered[0] || {});
+    renderGralGraphic(new Event('load'));
 }

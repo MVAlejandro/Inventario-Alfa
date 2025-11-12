@@ -45,7 +45,7 @@ export async function loadOptionsFilter(selectId, fields, defaultOption, selecte
     if (!allMovements) return;
 
     // Generar opciones según los campos
-    const opciones = allMovements.map(m => {
+    const options = allMovements.map(m => {
         if (Array.isArray(fields)) {
             // Combinar varios campos
             return fields.map(f => m[f]).filter(Boolean).join(' - ');
@@ -56,7 +56,15 @@ export async function loadOptionsFilter(selectId, fields, defaultOption, selecte
     });
 
     // Eliminar duplicados y valores vacíos
-    const uniqueOptions = [...new Set(opciones)].filter(v => v);
+    const uniqueOptions = [...new Set(options)].filter(v => v);
+    const allValues = uniqueOptions.every(v => !isNaN(v) && v !== '');
+
+    // Ordenar numéricamente si son números y alfabéticamente si son textos
+    if (allValues) {
+        uniqueOptions.sort((a, b) => Number(a) - Number(b));
+    } else {
+        uniqueOptions.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    }
 
     // Agregar opción por defecto
     const defaultOptionEl = document.createElement('option');
