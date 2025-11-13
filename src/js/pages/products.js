@@ -11,13 +11,15 @@ import '../components/navbar.js';
 import '../components/products/generate-form.js'
 
 // Servicios Supabase
+import { initPage } from '../utils/session-validate.js'; 
 import { addManualProduct, addExcelProduct } from '../components/products/products-form.js';
 import { productsFilter } from '../components/products/products-filter.js';
 import { renderProductsTable } from '../components/products/products-table.js';
 import { renderProductsEditModal } from '../components/products/products-modal.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-    renderProductsTable();
+document.addEventListener('DOMContentLoaded', async () => {
+    await renderProductsTable();
+    await initPage()
 });
 
 // Declarar el botón del formulario manual

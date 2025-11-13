@@ -10,9 +10,11 @@ import '../../css/components/footer.css'
 import '../components/navbar.js';
 
 // Servicios Supabase
+import { initPage } from '../utils/session-validate.js'; 
 import { indReportFilter, gralReportFilter } from '../components/reports/reports-filter.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    await initPage()
     // Filtrar tabla individual con el cambio del select
     const storeFilter = document.getElementById('store-filter');
     if (storeFilter) {

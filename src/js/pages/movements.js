@@ -11,13 +11,15 @@ import '../components/navbar.js';
 import '../components/movements/generate-form.js'
 
 // Servicios Supabase
+import { initPage } from '../utils/session-validate.js'; 
 import { addManualMovement, addExcelMovement } from '../components/movements/movements-form.js'
 import { movementsFilter } from '../components/movements/movements-filter.js';
 import { renderMovementsTable } from '../components/movements/movements-table.js';
 import { renderMovementsEditModal } from '../components/movements/movements-modal.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-    renderMovementsTable();
+document.addEventListener('DOMContentLoaded', async () => {
+    await renderMovementsTable();
+    await initPage()
 });
 
 // Declarar el botón del formulario manual

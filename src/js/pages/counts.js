@@ -11,13 +11,15 @@ import '../components/navbar.js';
 import '../components/counts/generate-form.js'
 
 // Servicios Supabase
+import { initPage } from '../utils/session-validate.js'; 
 import { addManualCount, addExcelCount } from '../components/counts/counts-form.js'
 import { countsFilter } from '../components/counts/counts-filter.js';
 import { renderCountsTable } from '../components/counts/counts-table.js';
 import { renderCountsEditModal } from '../components/counts/counts-modal.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-    renderCountsTable();
+document.addEventListener('DOMContentLoaded', async () => {
+    await renderCountsTable();
+    await initPage()
 });
 
 // Declarar el botón del formulario manual

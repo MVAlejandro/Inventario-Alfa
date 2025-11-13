@@ -110,7 +110,6 @@ input::placeholder, textarea::placeholder, #default-option {
 @media (max-width: 430px) {
     .label-over-border {
         margin-bottom: 1.5rem;
-        padding-left: 0;
     }
 }
 

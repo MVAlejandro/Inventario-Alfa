@@ -1,3 +1,4 @@
+import supabase from '../supabase/supabase-client'
 
 document.addEventListener("DOMContentLoaded", () => {
     const bar = document.getElementById("top-bar");
@@ -13,29 +14,43 @@ document.addEventListener("DOMContentLoaded", () => {
     activePage();
 });
 
+// Función para cerrar sesión con Supabase
+async function logOut() {
+    try {
+        const { error } = await supabase.auth.signOut();
+        if (error) console.error("Error al cerrar sesión:", error);
+
+        window.location.href = "/src/pages/login.html";
+    } catch (error) {
+        console.error("Error inesperado al cerrar sesión:", error);
+        window.location.href = "/src/pages/login.html";
+    }
+}
+
 // Crear barra superior
 function createBar(bar) {
     bar.insertAdjacentHTML(
         "beforeend",
-        `<div class="logout d-flex align-items-center">
-            <button id="btn-logout" class="btn">Salir</button>
+        `<div class="logout d-flex align-items-center justify-content-end">
+            <button id="btn-logout" class="btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M10 3.5a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 1 1 0v2A1.5 1.5 0 0 1 9.5 14h-8A1.5 1.5 0 0 1 0 12.5v-9A1.5 1.5 0 0 1 1.5 2h8A1.5 1.5 0 0 1 11 3.5v2a.5.5 0 0 1-1 0z"/>
+                    <path fill-rule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708z"/>
+                </svg>
+                <p class="small ps-2">Salir</p>
+            </button>
         </div>`
     );
+
+    document.getElementById("btn-logout").addEventListener("click", logOut);
 }
 
 // Crear navbar
 function createNavbar(navbar) {
-    const currentLocation = window.location.href;
-    let logoHref = "./index.html"; // Valor por defecto
-
-    if (currentLocation.includes("login.html")) {
-        logoHref.disabled = true;
-    }
-
     navbar.insertAdjacentHTML(
         "beforeend",
         `<div class="container-fluid">
-            <a id="nav-logo" class="navbar-brand" href="${logoHref}">
+            <a id="nav-logo" class="navbar-brand" href="/index.html">
                 <img src="/favicon.png" alt="Pallets Alfa logo">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"

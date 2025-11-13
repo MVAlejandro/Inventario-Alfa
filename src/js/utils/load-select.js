@@ -59,7 +59,7 @@ export async function loadOptionsFilter(selectId, fields, defaultOption, selecte
     const uniqueOptions = [...new Set(options)].filter(v => v);
     const allValues = uniqueOptions.every(v => !isNaN(v) && v !== '');
 
-    // Ordenar numéricamente si son números y alfabéticamente si son textos
+    // Ordenar: numéricamente si son números, alfabéticamente si son textos
     if (allValues) {
         uniqueOptions.sort((a, b) => Number(a) - Number(b));
     } else {

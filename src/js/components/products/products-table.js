@@ -45,7 +45,7 @@ export async function renderProductsTable(productsParam = null) {
             </td>
             <td class="product-code p-3">${producto.codigo}</td>
             <td class="product-store p-3">${producto.almacen}</td>
-            <td class="product-controls text-pageEnd p-3 pe-4">
+            <td class="product-controls text-pageEnd p-3 pe-4" data-admin-only>
                 <div class="action-buttons">
                     <button class="btn btn-edit" 
                         data-bs-target="#edit-modal" 

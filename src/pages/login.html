@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Identifícate - Pallets Alfa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+<body>
+    
+    <!-- BARRA DE RELLENO SUPERIOR -->
+    <div id="top-bar">
+
+    </div>
+
+    <!-- BARRA DE NAVEGACIÓN -->
+    <nav id="site-navbar">
+
+    </nav>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <main>
+        <section id="login" class="mb-5">
+            <div id="login-container" class="d-flex justify-content-center align-items-center m-5">
+                <div class="card col-12 col-md-8 col-lg-4 p-4">
+                    <div class="card-body">
+                        <div id="login-logo" class="text-center">
+                            <img src="/favicon.png" alt="Logo" class="m-2" style="height: auto;">
+                        </div>
+                        <div class="text-center mb-4 mt-4">
+                            <h1 class="card-title fw-bold">Identifícate</h1>
+                            <p class="text-muted small">Acceso restringido — Ingrese sus datos</p>
+                        </div>
+                        <form id="login-form" class=" justify-content-center">
+                            <div class="row">
+                                <div class="col login label-over-border mb-5">
+                                    <label for="email-login" class="form-label m-2">Correo</label>
+                                    <input type="email" id="email-login" class="form-control" placeholder="Introduce tu usuario">
+                                    <p class="error invalid-feedback" id="error-emailLog" style="color: red;"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col login label-over-border mb-5">
+                                    <label for="password-login" class="form-label m-2">Contraseña</label>
+                                    <input type="password" id="password-login" class="form-control" placeholder="Introduce tu contraseña">
+                                    <p class="error invalid-feedback" id="error-passwordLog" style="color: red;"></p>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <button type="button" id="btn-login" class="btn btn-primary fw-semibold">Ingresar</button>
+                            </div>
+                            <div class="text-center mt-3">
+                                <a href="https://palletsalfatexcoco.com.mx/inicio/" class="text-secondary small">Regresar</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer id="site-footer">
+
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script type="module" src="/src/js/pages/login.js"></script>
+</body>
+</html>
