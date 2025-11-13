@@ -1,7 +1,7 @@
 // Servicios supabase
 import { getSession, getUserRole } from "../services/login-service";
 
-// Función para validar sesión con Supabase
+// Función para validar sesión con Supabase con expiración por tiempo
 async function validateAuth() {
     try {
         const session = await getSession();
@@ -10,13 +10,30 @@ async function validateAuth() {
         const currentPath = window.location.pathname.split('/').pop();
         const isLoginPage = currentPath === 'login.html' || currentPath === ''; 
 
-        // Si no hay sesión y la ruta no es el login redirigir ahí
+        // Si no hay sesión y la ruta no es el login, redirigir ahí
         if (!session && !isLoginPage) {
             window.location.replace("/src/pages/login.html");
             return false;
         }
 
-        // Si hay sesión y la ruta es login redirigir al inicio
+        // Verificar vencimiento de sesión
+        const sessionDurationHours = 16;
+        const loginTimestamp = localStorage.getItem('loginTimestamp');
+
+        if (loginTimestamp) {
+            const elapsed = Date.now() - parseInt(loginTimestamp, 10);
+            const hoursElapsed = elapsed / (1000 * 60 * 60);
+
+            if (hoursElapsed > sessionDurationHours) {
+                console.log("Sesión expirada automáticamente.");
+                await supabase.auth.signOut();
+                localStorage.removeItem('loginTimestamp');
+                window.location.replace("/src/pages/login.html");
+                return false;
+            }
+        }
+
+        // Si hay sesión y la ruta es login, redirigir al inicio
         if (session && isLoginPage) {
             window.location.replace("/index.html");
             return true;

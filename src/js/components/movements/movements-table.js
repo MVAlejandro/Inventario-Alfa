@@ -139,7 +139,7 @@ export async function renderMovementsTable(movementsParam = null) {
                 currentPage = parseInt(type);
             }
 
-            renderProductsTable();
+            renderMovementsTable();
         });
     });
 }

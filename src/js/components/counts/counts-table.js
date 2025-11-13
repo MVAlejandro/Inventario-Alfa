@@ -140,7 +140,7 @@ export async function renderCountsTable(countsParam = null) {
                 currentPage = parseInt(type);
             }
 
-            renderProductsTable();
+            renderCountsTable();
         });
     });
 }

@@ -49,6 +49,9 @@ document.getElementById("btn-login").addEventListener("click", async function ()
             throw error;
         }
 
+        // Guardar la hora de inicio de sesión
+        localStorage.setItem('loginTimestamp', Date.now());
+
         // Redirigir si es exitoso
         window.location.replace("index.html");
         form.reset();
