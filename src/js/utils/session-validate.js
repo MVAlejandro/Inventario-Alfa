@@ -5,48 +5,48 @@ import { getSession, getUserRole } from "../services/login-service";
 async function validateAuth() {
     try {
         const session = await getSession();
-        console.log('Sesión actual:', session);
+        const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+        const isLoginPage = currentPath === 'login.html';
 
-        const currentPath = window.location.pathname.split('/').pop();
-        const isLoginPage = currentPath === 'login.html' || currentPath === ''; 
-
-        // Si no hay sesión y la ruta no es el login, redirigir ahí
+        // Sin sesión → redirigir a login si no estamos en login
         if (!session && !isLoginPage) {
-            window.location.replace("/src/pages/login.html");
+            console.log("No hay sesión, redirigiendo a login...");
+            window.location.href = "./login.html"; // ruta absoluta con extensión
             return false;
         }
 
-        // Verificar vencimiento de sesión
-        const sessionDurationHours = 16;
+        // Sesión expirada
+        const SESSION_DURATION_HOURS = 16;
         const loginTimestamp = localStorage.getItem('loginTimestamp');
-
         if (loginTimestamp) {
             const elapsed = Date.now() - parseInt(loginTimestamp, 10);
             const hoursElapsed = elapsed / (1000 * 60 * 60);
-
-            if (hoursElapsed > sessionDurationHours) {
+            if (hoursElapsed > SESSION_DURATION_HOURS) {
                 console.log("Sesión expirada automáticamente.");
                 await supabase.auth.signOut();
                 localStorage.removeItem('loginTimestamp');
-                window.location.replace("/src/pages/login.html");
+
+                if (!isLoginPage) {
+                    window.location.href = "./login.html";
+                }
                 return false;
             }
         }
 
-        // Si hay sesión y la ruta es login, redirigir al inicio
+        // Con sesión → redirigir a index si estamos en login
         if (session && isLoginPage) {
-            window.location.replace("/index.html");
+            console.log("Sesión activa, redirigiendo a index...");
+            window.location.href = "./index.html";
             return true;
         }
 
         return true;
+
     } catch (error) {
         console.error('Error verificando autenticación:', error);
-        const currentPath = window.location.pathname.split('/').pop();
-        const isLoginPage = currentPath === 'login.html';
-
-        if (!isLoginPage) {
-            window.location.replace("/src/pages/login.html");
+        const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+        if (currentPath !== 'login.html') {
+            window.location.href = "./login.html";
         }
         return false;
     }

@@ -20,10 +20,10 @@ async function logOut() {
         const { error } = await supabase.auth.signOut();
         if (error) console.error("Error al cerrar sesión:", error);
 
-        window.location.href = "/src/pages/login.html";
+        window.location.href = "./login.html";
     } catch (error) {
         console.error("Error inesperado al cerrar sesión:", error);
-        window.location.href = "/src/pages/login.html";
+        window.location.href = "./login.html";
     }
 }
 
@@ -50,8 +50,8 @@ function createNavbar(navbar) {
     navbar.insertAdjacentHTML(
         "beforeend",
         `<div class="container-fluid">
-            <a id="nav-logo" class="navbar-brand" href="/index.html">
-                <img src="/favicon.png" alt="Pallets Alfa logo">
+            <a id="nav-logo" class="navbar-brand" href="./index.html">
+                <img src="./favicon.png" alt="Pallets Alfa logo">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
                 aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,10 +59,10 @@ function createNavbar(navbar) {
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
                 <ul class="navbar-nav mx-auto">
-                    <li class="nav-item ms-2 me-2"><a class="nav-link nav-prin" href="/src/pages/products.html">Productos</a></li>
-                    <li class="nav-item ms-2 me-2"><a class="nav-link nav-prin" href="/src/pages/movements.html">Movimientos</a></li>
-                    <li class="nav-item ms-2 me-2"><a class="nav-link nav-prin" href="/src/pages/counts.html">Conteos</a></li>
-                    <li class="nav-item ms-2 me-2"><a class="nav-link nav-prin" href="/src/pages/reports.html">Reportes</a></li>
+                    <li class="nav-item ms-2 me-2"><a class="nav-link nav-prin" href="./products.html">Productos</a></li>
+                    <li class="nav-item ms-2 me-2"><a class="nav-link nav-prin" href="./movements.html">Movimientos</a></li>
+                    <li class="nav-item ms-2 me-2"><a class="nav-link nav-prin" href="./counts.html">Conteos</a></li>
+                    <li class="nav-item ms-2 me-2"><a class="nav-link nav-prin" href="./reports.html">Reportes</a></li>
                 </ul>
             </div>
             <svg id="nav-fill" xmlns="http://www.w3.org/2000/svg" width="62" height="62" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
